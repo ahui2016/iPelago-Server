@@ -2,6 +2,7 @@ package util
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"math/big"
 	"os"
@@ -104,4 +105,14 @@ func CheckStringSize(body string, sizeLimit int64) error {
 		return fmt.Errorf("size: %.1fKB, exceeds the limit (%.1fKB)", size, limit)
 	}
 	return nil
+}
+
+// Base64Encode .
+func Base64Encode(data []byte) string {
+	return base64.StdEncoding.EncodeToString(data)
+}
+
+// Base64Decode .
+func Base64Decode(s string) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(s)
 }

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS island
   link       text    NOT NULL,
   note       text    NOT NULL,
   hide_json  int     NOT NULL,
-  hide_html  int     NOT NULL,
+  hide_html  int     NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS message

@@ -14,7 +14,8 @@ const (
 )
 
 const (
-	dbFileName = "ipelago.db"
+	dbFileName      = "ipelago_server.db"
+	defaultPassword = "abc"
 )
 
 type (
@@ -22,12 +23,16 @@ type (
 	Newsletter = model.Newsletter
 )
 
+var secretKey []byte
+
 var (
 	db   = new(database.DB)
-	addr = flag.String("addr", "127.0.0.1:996", "IP address of the server")
+	addr = flag.String("addr", "127.0.0.1:80", "IP address of the server")
 )
 
 func init() {
 	flag.Parse()
 	util.Panic(db.Open(dbFileName))
+	util.Panic(initSecretKey())
+	util.Panic(initPassword())
 }
