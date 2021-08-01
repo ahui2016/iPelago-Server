@@ -1,13 +1,13 @@
-export type VNode = JQuery<HTMLElement>;
+export type mjElement = JQuery<HTMLElement>;
 
-export interface Component {
+export interface mjComponent {
   id: string;
   raw_id: string;
-  view(): VNode;
+  view(): mjElement;
 }
 
 // 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
-export function m(name: string | Component): VNode {
+export function m(name: string | mjComponent): mjElement {
   if (typeof name == 'string') {
     return $(document.createElement(name));
   }
@@ -15,7 +15,7 @@ export function m(name: string | Component): VNode {
 }
 
 // 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
-export function cc(name: string, id?: string, elements?: VNode[]): Component {
+export function cc(name: string, id?: string, elements?: mjElement[]): mjComponent {
   if (!id) {
     id = `r${Math.round(Math.random() * 100000000)}`;
   }
