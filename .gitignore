@@ -1,3 +1,4 @@
 
 *.exe
 *.db
+public/ts/node_modules/

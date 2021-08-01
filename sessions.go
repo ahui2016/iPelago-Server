@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/ahui2016/iPelago-Server/util"
@@ -23,7 +22,6 @@ const (
 var ipTryCount = make(map[string]int)
 
 func checkIPTryCount(ip string) error {
-	log.Print(ip)
 	if ipTryCount[ip] >= passwordMaxTry {
 		return fmt.Errorf("no more try, input wrong password too many times")
 	}
@@ -43,7 +41,6 @@ func initSecretKey() (err error) {
 		secretKey = mustGenerateRandomKey32()
 		err = db.InsertSecretKey(secretKey)
 	}
-	log.Print(secretKey)
 	return err
 }
 

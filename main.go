@@ -16,7 +16,7 @@ func main() {
 
 	e.Static("/public", "public")
 
-	e.File("/", "public/home.html", checkLogin)
+	e.File("/", "public/home.html")
 
 	api := e.Group("/api")
 	api.GET("/login", loginHanler)
