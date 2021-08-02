@@ -31,7 +31,11 @@ func errorHandler(err error, c echo.Context) {
 	c.JSON(500, Text{err.Error()})
 }
 
-func loginHanler(c echo.Context) error {
+func getLoginStatus(c echo.Context) error {
+	return c.JSON(OK, isLoggedIn(c))
+}
+
+func loginHandler(c echo.Context) error {
 	if isLoggedIn(c) {
 		return c.NoContent(OK)
 	}

@@ -1,5 +1,4 @@
-import dayjs from 'dayjs';
-import { mjElement, mjComponent, m, cc } from './mj';
+import { mjElement, mjComponent, m, cc } from './mj.js';
 
 // 获取地址栏的参数。
 export function getUrlParam(param: string): string | null {
@@ -120,4 +119,13 @@ export function ajax(
   });
 
   xhr.send(options.body);
+}
+
+export function getLoginStatus(): Promise<boolean> {
+  return new Promise(resolve => {
+    ajax({method:'GET',url:'/api/login-status'},
+      (isLoggedIn) => {
+        resolve(isLoggedIn);
+      });
+  });
 }

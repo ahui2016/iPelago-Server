@@ -5,6 +5,7 @@ export function m(name) {
     }
     return name.view();
 }
+// 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
 export function cc(name, id, elements) {
     if (!id) {
         id = `r${Math.round(Math.random() * 100000000)}`;
@@ -16,6 +17,7 @@ export function cc(name, id, elements) {
     return {
         id: '#' + id,
         raw_id: id,
-        view: () => vnode
+        view: () => vnode,
+        elem: () => $('#' + id)
     };
 }

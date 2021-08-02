@@ -19,7 +19,8 @@ func main() {
 	e.File("/", "public/home.html")
 
 	api := e.Group("/api")
-	api.GET("/login", loginHanler)
+	api.GET("/login-status", getLoginStatus)
+	api.GET("/login", loginHandler)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

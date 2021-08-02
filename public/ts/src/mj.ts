@@ -1,9 +1,11 @@
+
 export type mjElement = JQuery<HTMLElement>;
 
 export interface mjComponent {
   id: string;
   raw_id: string;
   view(): mjElement;
+  elem(): JQuery<HTMLElement>;
 }
 
 // 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
@@ -26,6 +28,8 @@ export function cc(name: string, id?: string, elements?: mjElement[]): mjCompone
   return {
     id: '#'+id,
     raw_id: id,
-    view: () => vnode
+    view: () => vnode,
+    elem: () => $('#'+id)
   };
 }
+

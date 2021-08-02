@@ -1,4 +1,25 @@
-import { m } from './mj.js';
-$('#root').append([
-    m('p').text('hello mj.ts'),
+import { m, cc } from './mj.js';
+import * as util from './util.js';
+const title = m('div').addClass('display-4 my-5 text-center').text('Timeline');
+const Login = cc('div', undefined, [
+    m('a').text('login').attr({ href: '/public/login.html' }),
 ]);
+const Logout = cc('div', undefined, [
+    m('a').text('logout'),
+]);
+$('#root').append([
+    title,
+    m(Login),
+    m(Logout),
+]);
+init();
+function init() {
+    util.ajax({ method: 'GET', url: '/api/login-status' }, (isLoggedIn) => {
+        if (isLoggedIn) {
+            Login.elem().hide();
+        }
+        else {
+            Logout.elem().hide();
+        }
+    });
+}
