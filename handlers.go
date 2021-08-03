@@ -35,6 +35,13 @@ func getLoginStatus(c echo.Context) error {
 	return c.JSON(OK, isLoggedIn(c))
 }
 
+func logoutHandler(c echo.Context) error {
+	sess, err := session.Get(sessionName, c)
+	util.Panic(err)
+	sess.Values[cookieLogin] = false
+	return sess.Save(c.Request(), c.Response())
+}
+
 func loginHandler(c echo.Context) error {
 	if isLoggedIn(c) {
 		return c.NoContent(OK)
@@ -45,15 +52,15 @@ func loginHandler(c echo.Context) error {
 	}
 
 	ip := c.RealIP()
-	if err := db.CheckPassword(pwd); err != nil {
-		ipTryCount[ip]++
-		if e := checkIPTryCount(ip); e != nil {
-			return e
-		}
+	if err := checkIPTryCount(ip); err != nil {
 		return err
 	}
-
+	if err := db.CheckPassword(pwd); err != nil {
+		ipTryCount[ip]++
+		return err
+	}
 	ipTryCount[ip] = 0
+
 	sess, err := session.Get(sessionName, c)
 	util.Panic(err)
 	sess.Values[cookieLogin] = true

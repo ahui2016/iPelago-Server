@@ -44,6 +44,7 @@ export function CreateAlerts() {
     };
     alerts.clear = () => {
         $(alerts.id).html('');
+        return alerts;
     };
     return alerts;
 }
@@ -79,7 +80,13 @@ export function ajax(options, onSuccess, onFail, onAlways) {
             onSuccess(this.response);
         }
         else {
-            const errMsg = `${this.status}` + this.responseText + this.response.message;
+            let errMsg = `${this.status}`;
+            if (this.responseType == 'text') {
+                errMsg += ` ${this.responseText}`;
+            }
+            else {
+                errMsg += ` ${this.response.message}`;
+            }
             handleErr(errMsg);
         }
     });
@@ -97,4 +104,9 @@ export function getLoginStatus() {
             resolve(isLoggedIn);
         });
     });
+}
+export function newFormData(name, value) {
+    const fd = new FormData();
+    fd.set(name, value);
+    return fd;
 }

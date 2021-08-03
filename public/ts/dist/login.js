@@ -2,28 +2,60 @@ import { m, cc } from './mj.js';
 import * as util from './util.js';
 const title = m('div').text('iPelago Online').addClass('display-4 my-5 text-center');
 const Alerts = util.CreateAlerts();
+const DashBtn = cc('a', { classes: 'btn btn-primary me-3' });
+const LogoutBtn = cc('button', { classes: 'btn btn-outline-primary' });
+const LogoutBtnArea = cc('div', { children: [
+        m(DashBtn).text('Dashboard').attr({ href: '/public/dashboard.html' }),
+        m(LogoutBtn).text('Logout').on('click', event => {
+            event.preventDefault();
+            util.ajax({ method: 'GET', url: '/api/logout', alerts: Alerts, buttonID: LogoutBtn.id }, () => {
+                LoginForm.elem().show();
+                LogoutBtnArea.elem().hide();
+                Alerts.clear().insert('success', '已登出');
+                PwdInput.elem().trigger('focus');
+            });
+        }),
+    ] });
 const PwdInput = cc('input');
 const SubmitBtn = cc('button');
-const LoginForm = cc('form', undefined, [
-    m('label').text('请输入管理员密码:').attr({ for: PwdInput.id }).addClass('form-label'),
-    m('div').addClass('input-group').append([
-        m(PwdInput).attr({ type: 'password' }).addClass('form-control'),
-        m(SubmitBtn).text('login').addClass('btn btn-primary'),
-    ]),
-]);
+const LoginForm = cc('form', { children: [
+        m('label').text('请输入管理员密码:').attr({ for: PwdInput.id }).addClass('form-label'),
+        m('div').addClass('input-group').append([
+            m(PwdInput).attr({ type: 'password' }).addClass('form-control'),
+            m(SubmitBtn).text('login').addClass('btn btn-primary').on('click', event => {
+                event.preventDefault();
+                const pwd = PwdInput.elem().val();
+                if (!pwd) {
+                    Alerts.insert('info', '请输入密码');
+                    return;
+                }
+                const body = util.newFormData('password', pwd);
+                util.ajax({ method: 'POST', url: '/api/login', alerts: Alerts, buttonID: SubmitBtn.id, body: body }, () => {
+                    toggleLoginForm();
+                    Alerts.clear().insert('success', '成功登入');
+                    // setTimeout(() => { location.href = '/public/home.html' }, 2000);
+                });
+            }),
+        ]),
+    ] });
 $('#root').append([
     title,
-    m(LoginForm),
+    m(LoginForm).addClass('mb-2'),
     m(Alerts),
+    m(LogoutBtnArea).addClass('text-center my-3').hide(),
 ]);
 init();
 async function init() {
     const isLoggedIn = await util.getLoginStatus();
     if (isLoggedIn) {
-        LoginForm.elem().hide();
         Alerts.insert('info', '已登入');
+        toggleLoginForm();
     }
     else {
         PwdInput.elem().trigger('focus');
     }
+}
+function toggleLoginForm() {
+    LoginForm.elem().toggle();
+    LogoutBtnArea.elem().toggle();
 }

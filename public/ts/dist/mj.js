@@ -3,21 +3,32 @@ export function m(name) {
     if (typeof name == 'string') {
         return $(document.createElement(name));
     }
-    return name.view();
+    return name.view;
 }
-// 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
-export function cc(name, id, elements) {
-    if (!id) {
-        id = `r${Math.round(Math.random() * 100000000)}`;
-    }
-    const vnode = m(name).attr('id', id);
-    if (elements) {
-        vnode.append(elements);
-    }
+function newComponent(name, id) {
     return {
         id: '#' + id,
         raw_id: id,
-        view: () => vnode,
+        view: m(name).attr('id', id),
         elem: () => $('#' + id)
     };
+}
+// 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
+export function cc(name, options) {
+    let id = `r${Math.round(Math.random() * 100000000)}`;
+    // 如果没有 options
+    if (!options) {
+        return newComponent(name, id);
+    }
+    // 后面就可以默认有 options
+    if (options.id)
+        id = options.id;
+    const component = newComponent(name, id);
+    if (options.attr)
+        component.view.attr(options.attr);
+    if (options.classes)
+        component.view.addClass(options.classes);
+    if (options.children)
+        component.view.append(options.children);
+    return component;
 }

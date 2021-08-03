@@ -26,8 +26,8 @@ export function enable(id: string): void {
 
 export interface mjAlerts extends mjComponent {
   insertElem: (elem: mjElement) => void;
-  insert: (msgType: string, msg: string) => void;
-  clear: () => void;
+  insert: (msgType: 'success' | 'danger' | 'info' | 'primary', msg: string) => void;
+  clear: () => mjAlerts;
 }
 
 export function CreateAlerts(): mjAlerts {
@@ -55,6 +55,7 @@ export function CreateAlerts(): mjAlerts {
 
   alerts.clear = () => {
     $(alerts.id).html('');
+    return alerts;
   };
 
   return alerts;
@@ -75,6 +76,7 @@ export function ajax(
   onFail?: (errMsg: string) => void,
   onAlways?: (that: XMLHttpRequest) => void
 ): void {
+
   const handleErr = (errMsg: string) => {
     if (onFail) {
       onFail(errMsg);
@@ -108,7 +110,12 @@ export function ajax(
     if (this.status == 200) {
       onSuccess(this.response);
     } else {
-      const errMsg = `${this.status}` + this.responseText + this.response!.message!;
+      let errMsg = `${this.status}`;
+      if (this.responseType == 'text') {
+        errMsg += ` ${this.responseText}`;
+      } else {
+        errMsg += ` ${this.response.message!}`;
+      }
       handleErr(errMsg);
     }
   });
@@ -128,4 +135,10 @@ export function getLoginStatus(): Promise<boolean> {
         resolve(isLoggedIn);
       });
   });
+}
+
+export function newFormData(name: string, value: string | Blob) {
+  const fd = new FormData();
+  fd.set(name, value);
+  return fd;
 }

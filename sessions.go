@@ -16,7 +16,7 @@ import (
 const (
 	sessionName    = "ipelago-server-session"
 	cookieLogin    = "ipelago-server-cookie-login"
-	passwordMaxTry = 100
+	passwordMaxTry = 3 // 100
 )
 
 var ipTryCount = make(map[string]int)
@@ -69,11 +69,6 @@ func isLoggedOut(c echo.Context) bool {
 func checkLogin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if isLoggedOut(c) {
-			ip := c.RealIP()
-			ipTryCount[ip]++
-			if err := checkIPTryCount(ip); err != nil {
-				return err
-			}
 			return c.NoContent(http.StatusUnauthorized)
 		}
 		return next(c)

@@ -20,7 +20,8 @@ func main() {
 
 	api := e.Group("/api")
 	api.GET("/login-status", getLoginStatus)
-	api.GET("/login", loginHandler)
+	api.POST("/login", loginHandler)
+	api.GET("/logout", logoutHandler)
 
 	e.Logger.Fatal(e.Start(*addr))
 }
