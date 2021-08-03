@@ -1,4 +1,6 @@
-// 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
+/**
+ * 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
+ */
 export function m(name) {
     if (typeof name == 'string') {
         return $(document.createElement(name));
@@ -13,7 +15,9 @@ function newComponent(name, id) {
         elem: () => $('#' + id)
     };
 }
-// 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
+/**
+ * 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
+ */
 export function cc(name, options) {
     let id = `r${Math.round(Math.random() * 100000000)}`;
     // 如果没有 options
@@ -31,4 +35,7 @@ export function cc(name, options) {
     if (options.children)
         component.view.append(options.children);
     return component;
+}
+export function ct(text) {
+    return document.createTextNode(text);
 }

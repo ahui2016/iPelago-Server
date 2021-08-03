@@ -21,11 +21,11 @@ init();
 
 function init() {
   util.ajax({method:'GET',url:'/api/login-status'},
-      (isLoggedIn) => {
-        if (isLoggedIn) {
-          Login.elem().hide();
-        } else {
-          Logout.elem().hide();
-        }
-      });
+    (isLoggedIn) => {
+      if (isLoggedIn) {
+        Login.elem().hide();
+      } else {
+        Logout.elem().hide();
+      }
+    });
 }

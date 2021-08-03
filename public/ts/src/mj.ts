@@ -8,7 +8,9 @@ export interface mjComponent {
   elem(): JQuery<HTMLElement>;
 }
 
-// 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
+/** 
+ * 函数名 m 来源于 Mithril, 也可以理解为 make 的简称，用来创建一个元素。
+ */
 export function m(name: string | mjComponent): mjElement {
   if (typeof name == 'string') {
     return $(document.createElement(name));
@@ -32,7 +34,9 @@ function newComponent(name: string, id: string): mjComponent {
   };
 }
 
-// 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
+/**
+ * 函数名 cc 意思是 create a component, 用来创建一个简单的组件。
+ */
 export function cc(name: string, options?: ComponentOptions): mjComponent {
   let id = `r${Math.round(Math.random() * 100000000)}`;
 
@@ -51,3 +55,6 @@ export function cc(name: string, options?: ComponentOptions): mjComponent {
   return component;
 }
 
+export function ct(text: string): Text {
+  return document.createTextNode(text);
+}
