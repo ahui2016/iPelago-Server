@@ -5,7 +5,7 @@ export interface mjComponent {
   id: string;
   raw_id: string;
   view: mjElement;
-  elem(): JQuery<HTMLElement>;
+  elem: () => JQuery<HTMLElement>;
 }
 
 /** 

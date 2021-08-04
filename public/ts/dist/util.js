@@ -1,8 +1,9 @@
 import { m, cc } from './mj.js';
 // 获取地址栏的参数。
 export function getUrlParam(param) {
-    let queryString = new URLSearchParams(document.location.search);
-    return queryString.get(param);
+    var _a;
+    const queryString = new URLSearchParams(document.location.search);
+    return (_a = queryString.get(param)) !== null && _a !== void 0 ? _a : '';
 }
 export function disable(id) {
     const nodeName = $(id).prop('nodeName');
@@ -48,6 +49,14 @@ export function CreateAlerts() {
     };
     return alerts;
 }
+export function CreateLoading() {
+    const loading = cc('div', { classes: 'text-center', children: [
+            m('div').addClass('spinner-border').attr({ role: 'status' }).append(m('span').addClass('visually-hidden').text('Loading...'))
+        ] });
+    loading.hide = () => { loading.elem().hide(); };
+    loading.show = () => { loading.elem().show(); };
+    return loading;
+}
 export function ajax(options, onSuccess, onFail, onAlways) {
     const handleErr = (errMsg) => {
         if (onFail) {
@@ -64,6 +73,10 @@ export function ajax(options, onSuccess, onFail, onAlways) {
     if (options.buttonID)
         disable(options.buttonID);
     const xhr = new XMLHttpRequest();
+    xhr.timeout = 10 * 1000;
+    xhr.ontimeout = () => {
+        handleErr('timeout');
+    };
     if (options.responseType) {
         xhr.responseType = options.responseType;
     }
@@ -72,10 +85,10 @@ export function ajax(options, onSuccess, onFail, onAlways) {
     }
     xhr.open(options.method, options.url);
     xhr.onerror = () => {
-        const errMsg = 'An error occurred during the transaction';
-        handleErr(errMsg);
+        handleErr('An error occurred during the transaction');
     };
-    xhr.addEventListener('load', function () {
+    xhr.onload = function () {
+        var _a;
         if (this.status == 200) {
             onSuccess(this.response);
         }
@@ -85,22 +98,36 @@ export function ajax(options, onSuccess, onFail, onAlways) {
                 errMsg += ` ${this.responseText}`;
             }
             else {
-                errMsg += ` ${this.response.message}`;
+                errMsg += ` ${(_a = this.response) === null || _a === void 0 ? void 0 : _a.message}`;
             }
             handleErr(errMsg);
         }
-    });
-    xhr.addEventListener('loadend', function () {
+    };
+    xhr.onloadend = function () {
         if (options.buttonID)
             enable(options.buttonID);
         if (onAlways)
             onAlways(this);
-    });
+    };
     xhr.send(options.body);
 }
-export function getLoginStatus() {
+/**
+ * @param n 超时限制，单位是秒
+ */
+export function ajaxPromise(options, n) {
+    const second = 1000;
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => { reject('timeout'); }, n * second);
+        ajax(options, result => { resolve(result); }, // onSuccess
+        // onSuccess
+        errMsg => { reject(errMsg); }, // onError
+        () => { clearTimeout(timeout); } // onAlways
+        );
+    });
+}
+function getLoginStatus(alerts) {
     return new Promise(resolve => {
-        ajax({ method: 'GET', url: '/api/login-status' }, (isLoggedIn) => {
+        ajax({ method: 'GET', url: '/api/login-status', alerts: alerts }, (isLoggedIn) => {
             resolve(isLoggedIn);
         });
     });
@@ -109,4 +136,28 @@ export function newFormData(name, value) {
     const fd = new FormData();
     fd.set(name, value);
     return fd;
+}
+export async function checkLogin(alerts) {
+    const isLoggedIn = await getLoginStatus(alerts);
+    if (isLoggedIn) {
+        $('.onLoggedIn').show();
+        $('.onLoggedOut').hide();
+    }
+    else {
+        alerts === null || alerts === void 0 ? void 0 : alerts.insert('info', '需要用管理员密码登入后才能访问本页面');
+        $('.onLoggedIn').hide();
+        $('.onLoggedOut').show();
+    }
+    return isLoggedIn;
+}
+export const LoginArea = cc('div', {
+    classes: 'text-center my-3',
+    children: [
+        m('a').text('Login').attr({ href: '/public/login.html' }),
+    ]
+});
+export function val(obj) {
+    if ('elem' in obj)
+        return obj.elem().val();
+    return obj.val();
 }

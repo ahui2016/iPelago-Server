@@ -13,8 +13,8 @@ const LogoutBtnArea = cc('div', {children: [
     event.preventDefault();
     util.ajax({method:'GET',url:'/api/logout',alerts:Alerts,buttonID:LogoutBtn.id},
       () => {
-        LoginForm.elem().show();
-        LogoutBtnArea.elem().hide();
+        $('.onLoggedIn').hide();
+        $('.onLoggedOut').show();    
         Alerts.clear().insert('success', '已登出');
         PwdInput.elem().trigger('focus');
       });
@@ -38,7 +38,8 @@ const LoginForm = cc('form', {children: [
       const body = util.newFormData('password', pwd);
       util.ajax({method:'POST',url:'/api/login',alerts:Alerts,buttonID:SubmitBtn.id,body:body},
         () => {
-          toggleLoginForm();
+          $('.onLoggedIn').show();
+          $('.onLoggedOut').hide();      
           Alerts.clear().insert('success', '成功登入');
           // setTimeout(() => { location.href = '/public/home.html' }, 2000);
         });
@@ -48,24 +49,18 @@ const LoginForm = cc('form', {children: [
 
 $('#root').append([
   title,
-  m(LoginForm).addClass('mb-2'),
+  m(LoginForm).addClass('onLoggedOut mb-2'),
   m(Alerts),
-  m(LogoutBtnArea).addClass('text-center my-3').hide(),
+  m(LogoutBtnArea).addClass('onLoggedIn text-center my-3').hide(),
 ]);
 
 init();
 
 async function init() {
-  const isLoggedIn = await util.getLoginStatus();
+  const isLoggedIn = await util.checkLogin();
   if (isLoggedIn) {
     Alerts.insert('info', '已登入');
-    toggleLoginForm();
   } else {
     PwdInput.elem().trigger('focus');
   }
-}
-
-function toggleLoginForm() {
-  LoginForm.elem().toggle();
-  LogoutBtnArea.elem().toggle();
 }

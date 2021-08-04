@@ -13,17 +13,11 @@ const Index = cc('div', {children: [
   ]),
 ]});
 
-const LoginArea = cc('div', {
-  classes: 'text-center my-3',
-  children: [
-    m('a').text('Login').attr({href:'/public/login.html'}),
-  ]});
-
 $('#root').append([
   title,
   m(Alerts),
-  m(Index).hide(),
-  m(LoginArea),
+  m(Index).addClass('onLoggedIn').hide(),
+  m(util.LoginArea).addClass('onLoggedOut'),
 ]);
 
 function create_item(name: string, link: string, description: string): mjElement {
@@ -38,12 +32,6 @@ function create_item(name: string, link: string, description: string): mjElement
 init();
 
 async function init() {
-  const isLoggedIn = await util.getLoginStatus();
-  if (isLoggedIn) {
-    Index.elem().show();
-    LoginArea.elem().hide();
-  } else {
-    Alerts.insert('info', '需要用管理员密码登入后才能访问本页面');
-    LoginArea.elem().show();
-  }
+  const isLoggedIn = await util.checkLogin(Alerts);
+  if (!isLoggedIn) return;
 }

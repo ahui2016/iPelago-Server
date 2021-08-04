@@ -9,17 +9,11 @@ const Index = cc('div', { children: [
             create_item('New Island', '/public/island-info.html', '新建小岛'),
         ]),
     ] });
-const LoginArea = cc('div', {
-    classes: 'text-center my-3',
-    children: [
-        m('a').text('Login').attr({ href: '/public/login.html' }),
-    ]
-});
 $('#root').append([
     title,
     m(Alerts),
-    m(Index).hide(),
-    m(LoginArea),
+    m(Index).addClass('onLoggedIn').hide(),
+    m(util.LoginArea).addClass('onLoggedOut'),
 ]);
 function create_item(name, link, description) {
     return m('div').addClass('row mb-2 g-1').append([
@@ -29,13 +23,7 @@ function create_item(name, link, description) {
 }
 init();
 async function init() {
-    const isLoggedIn = await util.getLoginStatus();
-    if (isLoggedIn) {
-        Index.elem().show();
-        LoginArea.elem().hide();
-    }
-    else {
-        Alerts.insert('info', '需要用管理员密码登入后才能访问本页面');
-        LoginArea.elem().show();
-    }
+    const isLoggedIn = await util.checkLogin(Alerts);
+    if (!isLoggedIn)
+        return;
 }
