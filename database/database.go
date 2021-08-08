@@ -75,3 +75,23 @@ func (db *DB) CheckPassword(userInputPwd string) error {
 	}
 	return nil
 }
+
+func (db *DB) CreateIsland(island Island) error {
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
+	e1 := insertIsland(tx, island)
+	e2 := insertFirsstMsg(tx, island.ID, island.Name)
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+func (db *DB) GetIslandByID(id string) (Island, error) {
+	island, err := getIslandByID(db.DB, id)
+	if err == sql.ErrNoRows {
+		err = nil
+	}
+	return island, err
+}

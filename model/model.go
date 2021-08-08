@@ -12,7 +12,7 @@ const (
 	MsgSizeLimitBase   = 10 * KB
 	MsgSizeLimitMargin = 5 * KB
 	MsgSizeLimit       = MsgSizeLimitBase + MsgSizeLimitMargin // 15KB
-	AvatarSizeLimit    = 500 * KB
+	AvatarSizeLimit    = 150 * KB
 )
 
 type Newsletter struct {
