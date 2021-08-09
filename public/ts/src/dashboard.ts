@@ -1,8 +1,8 @@
-import { mjElement, mjComponent, m, cc, ct } from './mj.js';
+import { mjElement, mjComponent, m, cc, mt } from './mj.js';
 import * as util from './util.js';
 
 const title = m('div').attr({id:'title'}).addClass('display-6 my-5 text-center').append([
-  ct('iPelago'), m('sup').text('online'),
+  mt('iPelago'), m('sup').text('online'),
 ]);
 
 const Alerts = util.CreateAlerts();
@@ -10,6 +10,7 @@ const Alerts = util.CreateAlerts();
 const Index = cc('div', {children: [
   m('div').append([
     create_item('New Island', '/public/island-info.html', '新建小岛'),
+    create_item('All Islands', '/public/islands.html', '我的全部小岛'),
   ]),
 ]});
 

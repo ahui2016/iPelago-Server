@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -39,8 +38,7 @@ func getLoginStatus(c echo.Context) error {
 }
 
 func logoutHandler(c echo.Context) error {
-	sess, err := session.Get(sessionName, c)
-	util.Panic(err)
+	sess, _ := session.Get(sessionName, c)
 	sess.Values[cookieLogin] = false
 	return sess.Save(c.Request(), c.Response())
 }
@@ -64,8 +62,7 @@ func loginHandler(c echo.Context) error {
 	}
 	ipTryCount[ip] = 0
 
-	sess, err := session.Get(sessionName, c)
-	util.Panic(err)
+	sess, _ := session.Get(sessionName, c)
 	sess.Values[cookieLogin] = true
 	return sess.Save(c.Request(), c.Response())
 }
@@ -90,6 +87,14 @@ func getIslandHandler(c echo.Context) error {
 	return c.JSON(OK, island)
 }
 
+func allIslands(c echo.Context) error {
+	islands, err := db.AllIslands()
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, islands)
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {
@@ -100,12 +105,9 @@ func getFormValue(c echo.Context, key string) (string, error) {
 	return value, nil
 }
 
-func getTimestamp(c echo.Context) (int64, error) {
-	s := c.QueryParam("time")
-	if s == "" {
-		return util.TimeNow(), nil
-	}
-	return strconv.ParseInt(s, 10, 0)
+func getIslandHide(c echo.Context) bool {
+	value := c.FormValue("hide")
+	return value == "private"
 }
 
 func getFormIsland(c echo.Context) (island *Island, err error) {
@@ -113,25 +115,26 @@ func getFormIsland(c echo.Context) (island *Island, err error) {
 	if err != nil {
 		return
 	}
+
 	id := strings.TrimSpace(c.FormValue("id"))
 	if id == "" {
 		id = util.RandomID()
 	}
-	email := strings.TrimSpace(c.FormValue("email"))
-	link := strings.TrimSpace(c.FormValue("link"))
-	avatar := strings.TrimSpace(c.FormValue("avatar"))
 
+	avatar := strings.TrimSpace(c.FormValue("avatar"))
 	if avatar != "" {
 		if err = checkAvatarSize(avatar); err != nil {
 			return
 		}
 	}
+
 	island = &Island{
 		ID:     id,
 		Name:   name,
-		Email:  email,
+		Email:  strings.TrimSpace(c.FormValue("email")),
 		Avatar: avatar,
-		Link:   link,
+		Link:   strings.TrimSpace(c.FormValue("link")),
+		Hide:   getIslandHide(c),
 	}
 	return
 }

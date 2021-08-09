@@ -1,6 +1,6 @@
 import { m, cc } from './mj.js';
 import * as util from './util.js';
-let islandID = '';
+let islandID = util.getUrlParam('id');
 const Title = cc('div', { classes: 'display-6' });
 const TitleArea = cc('div', {
     classes: 'd-flex justify-content-between align-items-center my-5',
@@ -13,11 +13,30 @@ const NameInput = cc('input');
 const AvatarInput = cc('input');
 const EmailInput = cc('input');
 const LinkInput = cc('input');
-const Form = cc('div', { children: [
+const RadioPublic = cc('input', {
+    classes: 'form-check-input',
+    attr: { type: 'radio', value: 'public', name: 'island-hide' },
+});
+const RadioPrivate = cc('input', {
+    classes: 'form-check-input',
+    attr: { type: 'radio', value: 'private', name: 'island-hide' },
+});
+const Form = cc('div', { classes: 'vstack gap-3', children: [
         create_item(NameInput, 'Name', '岛名，相当于用户名或昵称 (必填)'),
         create_item(EmailInput, 'Email', '岛主的真实 email, 可作为后备联系方式。(可留空，但建议填写)'),
         create_item(AvatarInput, 'Avatar', '头像图片的网址，头像图片应为正方形，建议头像体积控制在 100KB 以下。请确保头像图片能跨域访问。(可留空)'),
         create_item(LinkInput, 'Link', '一个网址，可以是你的个人网站或博客，也可填写其他社交帐号的网址。(可留空)'),
+        m('div').addClass('hstack gap-3').append([
+            m('div').text('是否公开:'),
+            m('div').addClass('form-check form-check-inline').append([
+                m(RadioPublic).attr({ checked: true }),
+                m('label').text('Public').addClass('form-check-label').attr({ for: RadioPublic.raw_id }),
+            ]),
+            m('div').addClass('form-check form-check-inline').append([
+                m(RadioPrivate),
+                m('label').text('Private').addClass('form-check-label').attr({ for: RadioPrivate.raw_id }),
+            ]),
+        ]),
     ] });
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
@@ -29,7 +48,7 @@ const SubmitBtnArea = cc('div', { children: [
         m(CreateBtn).text('Create').on('click', async () => {
             try {
                 const body = await newIslandForm();
-                util.ajax({ method: 'POST', url: '/api/create-island', alerts: Alerts, buttonID: CreateBtn.id, body: body }, (id) => {
+                util.ajax({ method: 'POST', url: '/admin/create-island', alerts: Alerts, buttonID: CreateBtn.id, body: body }, (id) => {
                     islandID = id;
                     Alerts.insert('success', '建岛成功');
                     $('.NewIsland').hide();
@@ -43,7 +62,7 @@ const SubmitBtnArea = cc('div', { children: [
         m(UpdateBtn).text('Update').hide().on('click', async () => {
             try {
                 const body = await newIslandForm();
-                util.ajax({ method: 'POST', url: '/api/update-island', alerts: Alerts, buttonID: UpdateBtn.id, body: body }, () => { Alerts.insert('success', '更新成功'); });
+                util.ajax({ method: 'POST', url: '/admin/update-island', alerts: Alerts, buttonID: UpdateBtn.id, body: body }, () => { Alerts.insert('success', '更新成功'); });
             }
             catch (errMsg) {
                 Alerts.insert('danger', errMsg);
@@ -60,10 +79,10 @@ $('#root').append([
     m(Form).addClass('onLoggedIn').hide(),
     m(Alerts).addClass('my-3'),
     m(util.LoginArea).addClass('onLoggedOut'),
-    m(SubmitBtnArea).addClass('onLoggedIn').hide(),
+    m(SubmitBtnArea).addClass('onLoggedIn my-5').hide(),
 ]);
 function create_item(comp, name, description) {
-    return m('div').addClass('mb-3').append([
+    return m('div').append([
         m('label').addClass('form-label fw-bold').attr({ for: comp.raw_id }).text(name),
         m(comp).addClass('form-control').attr({ type: 'text' }),
         m('div').addClass('form-text').text(description),
@@ -74,11 +93,10 @@ async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
     if (!isLoggedIn)
         return;
-    islandID = util.getUrlParam('id');
     if (islandID) {
         Loading.show();
         const body = util.newFormData('id', islandID);
-        util.ajax({ method: 'GET', url: '/api/get-island', alerts: Alerts, body: body }, (resp) => {
+        util.ajax({ method: 'POST', url: '/admin/get-island', alerts: Alerts, body: body }, (resp) => {
             const island = resp;
             $('.NewIsland').hide();
             $('.OldIsland').show();
@@ -87,6 +105,14 @@ async function init() {
             EmailInput.elem().val(island.Email);
             AvatarInput.elem().val(island.Avatar);
             LinkInput.elem().val(island.Link);
+            if (island.Hide) {
+                RadioPrivate.elem().prop('checked', true);
+                RadioPublic.elem().prop('checked', false);
+            }
+            else {
+                RadioPrivate.elem().prop('checked', false);
+                RadioPublic.elem().prop('checked', true);
+            }
         }, undefined, () => {
             Loading.hide();
         });
@@ -109,6 +135,7 @@ async function newIslandForm() {
     body.set('email', util.val(EmailInput).trim());
     body.set('avatar', avatarAddr);
     body.set('link', util.val(LinkInput).trim());
+    body.set('hide', $('input[name="island-hide"]:checked').val());
     return body;
 }
 async function checkAvatarSize(avatarAddr) {

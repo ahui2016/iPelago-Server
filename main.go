@@ -22,8 +22,11 @@ func main() {
 	api.GET("/login-status", getLoginStatus)
 	api.POST("/login", loginHandler)
 	api.GET("/logout", logoutHandler)
-	api.POST("/create-island", createIslandHandler)
-	api.POST("/get-island", getIslandHandler)
+
+	admin := e.Group("/admin", checkLogin)
+	admin.POST("/create-island", createIslandHandler)
+	admin.POST("/get-island", getIslandHandler)
+	admin.GET("/all-islands", allIslands)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

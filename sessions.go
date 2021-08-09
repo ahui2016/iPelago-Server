@@ -57,7 +57,9 @@ func initPassword() error {
 
 func isLoggedIn(c echo.Context) (yes bool) {
 	sess, err := session.Get(sessionName, c)
-	util.Panic(err)
+	if err != nil {
+		return false
+	}
 	yes, _ = sess.Values[cookieLogin].(bool)
 	return
 }

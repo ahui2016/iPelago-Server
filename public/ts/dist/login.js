@@ -35,6 +35,8 @@ const LoginForm = cc('form', { children: [
                     $('.onLoggedOut').hide();
                     Alerts.clear().insert('success', '成功登入');
                     // setTimeout(() => { location.href = '/public/home.html' }, 2000);
+                }, undefined, () => {
+                    PwdInput.elem().val('');
                 });
             }),
         ]),

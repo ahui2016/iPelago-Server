@@ -95,3 +95,22 @@ func (db *DB) GetIslandByID(id string) (Island, error) {
 	}
 	return island, err
 }
+
+func (db *DB) AllIslands() (islands []*Island, err error) {
+	rows, err := db.DB.Query(stmt.AllIslands)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		island, err := scanIsland(rows)
+		if err != nil {
+			return nil, err
+		}
+		if island.Message, err = getLastMsg(db.DB, island.ID); err != nil {
+			return nil, err
+		}
+		islands = append(islands, &island)
+	}
+	return islands, rows.Err()
+}

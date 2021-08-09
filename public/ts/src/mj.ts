@@ -6,6 +6,7 @@ export interface mjComponent {
   raw_id: string;
   view: mjElement;
   elem: () => JQuery<HTMLElement>;
+  init?: () => void;
 }
 
 /** 
@@ -19,10 +20,10 @@ export function m(name: string | mjComponent): mjElement {
 }
 
 interface ComponentOptions {
-  id?:       string,
-  children?: mjElement[], 
-  classes?:  string, 
-  attr?:     {[index: string]:any}
+  id?:       string;
+  children?: mjElement[]; 
+  classes?:  string;
+  attr?:     {[index: string]:any};
 }
 
 function newComponent(name: string, id: string): mjComponent {
@@ -55,6 +56,9 @@ export function cc(name: string, options?: ComponentOptions): mjComponent {
   return component;
 }
 
-export function ct(text: string): Text {
+/**
+ * 函数名 mt 意思是 make a text element, 用来创建一个纯文本元素。
+ */
+ export function mt(text: string): Text {
   return document.createTextNode(text);
 }

@@ -11,3 +11,13 @@ pre {
     max-width: 775px;
     min-width: 400px;
 }
+
+.Avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 5%;
+}
+
+.IslandPublic {
+    cursor: pointer;
+}

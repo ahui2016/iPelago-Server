@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS island
   avatar     text    NOT NULL,
   link       text    NOT NULL,
   note       text    NOT NULL,
-  hide_json  int     NOT NULL,
-  hide_html  int     NOT NULL
+  hide       int     NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS message
@@ -41,11 +40,11 @@ const GetTextValue = `SELECT text_value FROM metadata WHERE name=?;`
 const UpdateTextValue = `UPDATE metadata SET text_value=? WHERE name=?;`
 
 const GetIslandByID = `
-  SELECT id, name, email, avatar, link, note, hide_json, hide_html
+  SELECT id, name, email, avatar, link, note, hide
   FROM island WHERE id=?;`
 
 const AllIslands = `
-  SELECT id, name, email, avatar, link, note, hide_json, hide_html
+  SELECT id, name, email, avatar, link, note, hide
   FROM island ORDER BY id DESC;`
 
 const GetMoreMessagesByIsland = `
@@ -61,12 +60,12 @@ const DeleteIsland = `
   DELETE FROM island WHERE id=?;`
 
 const InsertIsland = `
-  INSERT INTO island (id, name, email, avatar, link, note, hide_json, hide_html)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+  INSERT INTO island (id, name, email, avatar, link, note, hide)
+  VALUES (?, ?, ?, ?, ?, ?, ?);`
 
 const UpdateIsland = `
   UPDATE island
-  SET name=?, email=?, avatar=?, link=?, hide_json=?, hide_html=?
+  SET name=?, email=?, avatar=?, link=?, hide=?
   WHERE id=?;`
 
 const UpdateNote = `

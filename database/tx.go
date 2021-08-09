@@ -41,8 +41,7 @@ func scanIsland(row Row) (island Island, err error) {
 		&island.Avatar,
 		&island.Link,
 		&island.Note,
-		&island.HideJSON,
-		&island.HideHTML,
+		&island.Hide,
 	)
 	return
 }
@@ -56,8 +55,7 @@ func insertIsland(tx TX, island Island) error {
 		island.Avatar,
 		island.Link,
 		island.Note,
-		island.HideJSON,
-		island.HideHTML,
+		island.Hide,
 	)
 	return err
 }
@@ -71,6 +69,16 @@ func insertMsg(tx TX, msg *Message) error {
 		msg.Body,
 	)
 	return err
+}
+
+func scanMessage(row Row) (msg Message, err error) {
+	err = row.Scan(
+		&msg.ID,
+		&msg.IslandID,
+		&msg.Time,
+		&msg.Body,
+	)
+	return
 }
 
 // insertFirstMsg 插入每个小岛被建立时的第一条消息。
@@ -90,4 +98,24 @@ func insertFirsstMsg(tx TX, islandID, name string) error {
 func getIslandByID(tx TX, id string) (island Island, err error) {
 	row := tx.QueryRow(stmt.GetIslandByID, id)
 	return scanIsland(row)
+}
+
+func getLastMsg(tx TX, id string) (msg SimpleMsg, err error) {
+	msg, err = getNextMsg(tx, id, util.TimeNow())
+	if err != nil {
+		return
+	}
+	oldLength := len(msg.Body)
+	msg.Body = util.StringLimit(msg.Body, 256) // 256 bytes
+	if oldLength != len(msg.Body) {
+		msg.Body += "......"
+	}
+	return
+}
+
+func getNextMsg(tx TX, id string, datetime int64) (SimpleMsg, error) {
+	row := tx.QueryRow(stmt.GetMoreMessagesByIsland, id, datetime, 1)
+	msg, err := scanMessage(row)
+	simple := msg.ToSimple()
+	return *simple, err
 }

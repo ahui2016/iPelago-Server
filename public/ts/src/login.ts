@@ -39,9 +39,11 @@ const LoginForm = cc('form', {children: [
       util.ajax({method:'POST',url:'/api/login',alerts:Alerts,buttonID:SubmitBtn.id,body:body},
         () => {
           $('.onLoggedIn').show();
-          $('.onLoggedOut').hide();      
+          $('.onLoggedOut').hide();
           Alerts.clear().insert('success', '成功登入');
           // setTimeout(() => { location.href = '/public/home.html' }, 2000);
+        }, undefined, () => {
+          PwdInput.elem().val('');
         });
     }),
   ]),

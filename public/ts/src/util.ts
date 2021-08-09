@@ -1,10 +1,17 @@
 import { mjElement, mjComponent, m, cc } from './mj.js';
 
 export interface Island {
+  ID: string;
   Name: string;
   Email: string;
   Avatar: string;
   Link: string;
+  Note: string;
+  Hide: boolean;
+  Message: {
+    time: number;
+    body: string;
+  } 
 }
 
 // 获取地址栏的参数。

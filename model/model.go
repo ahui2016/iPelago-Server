@@ -77,15 +77,14 @@ func (msg *SimpleMsg) ToMessage(islandID string) *Message {
 }
 
 type Island struct {
-	ID       string    // primary key
-	Name     string    // 岛名
-	Email    string    // Email
-	Avatar   string    // 头像
-	Link     string    // 小岛主页或岛主博客
-	Note     string    // 对该小岛的备注或评价
-	HideJSON bool      // JSON文件是否允许公开访问
-	HideHTML bool      // 小岛网页版是否允许公开访问
-	Message  SimpleMsg // 最新一条消息
+	ID      string    // primary key
+	Name    string    // 岛名
+	Email   string    // Email
+	Avatar  string    // 头像
+	Link    string    // 小岛主页或岛主博客
+	Note    string    // 对该小岛的备注或评价
+	Hide    bool      // 小岛是否允许公开访问
+	Message SimpleMsg // 最新一条消息
 }
 
 func NewIsland(nl *Newsletter) Island {
