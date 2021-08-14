@@ -21,3 +21,6 @@ pre {
 .IslandPublic {
     cursor: pointer;
 }
+.IslandPrivate {
+    cursor: default;
+}

@@ -76,7 +76,11 @@ func (db *DB) CheckPassword(userInputPwd string) error {
 	return nil
 }
 
-func (db *DB) CreateIsland(island Island) error {
+func (db *DB) UpdateIsland(island *Island) error {
+	return updateIsland(db.DB, island)
+}
+
+func (db *DB) CreateIsland(island *Island) error {
 	tx := db.mustBegin()
 	defer tx.Rollback()
 

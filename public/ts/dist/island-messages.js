@@ -1,17 +1,18 @@
 import { m, cc, appendToList } from './mj.js';
 import * as util from './util.js';
-let islandID = util.getUrlParam('id');
+const islandID = util.getUrlParam('id');
+const islandInfoPage = '/public/island-info.html?id=' + islandID;
 let lastTime = dayjs().unix();
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 const InfoCard = cc('div', { classes: 'card', children: [
         m('div').addClass('card-body d-flex justify-content-start align-items-start').append([
-            m('img').addClass('Avatar').attr({ src: '/public/avatar-default.jpg', alt: 'avatar' }),
+            m('a').attr({ href: islandInfoPage }).append(m('img').addClass('Avatar').attr({ src: '/public/avatar-default.jpg', alt: 'avatar', title: '编辑小岛信息' })),
             m('div').addClass('ms-3 flex-fill IslandInfo').append([
                 m('div').append([
-                    m('span').addClass('Name fw-bold'),
-                    m('span').text('private').addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
-                    m('span').text('public').addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
+                    m('a').addClass('Name fw-bold link-dark').attr({ href: islandInfoPage, title: '编辑小岛信息' }),
+                    m('span').text('private').attr({ title: '本岛不对外公开' }).addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
+                    m('span').text('public').attr({ title: '点击查看小岛地址' }).addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
                         Alerts.insert('primary', `小岛地址: ${location.origin}/public/${islandID}.json`);
                     }),
                 ]),
@@ -33,7 +34,7 @@ InfoCard.init = (arg) => {
         islandInfo.append(m('div').addClass('small text-muted').text(island.Email));
     }
     if (island.Link) {
-        islandInfo.append(m('a').addClass('small').text(island.Link).attr({ href: island.Link }));
+        islandInfo.append(m('div').append(m('a').addClass('small').text(island.Link).attr({ href: island.Link })));
     }
     if (island.Note) {
         islandInfo.append(m('div').addClass('small text-muted').text(island.Note));
@@ -46,11 +47,11 @@ const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(MoreBtn).text('More').on('click', getMessages),
     ] });
 $('#root').append([
-    m(InfoCard).addClass('my-5').hide(),
+    m(InfoCard).addClass('mt-5').hide(),
     m(Alerts),
     m(MsgList),
     m(Loading).addClass('my-5').hide(),
-    m(MoreBtnAlerts),
+    m(MoreBtnAlerts).addClass('my-2'),
     m(MoreBtnArea).hide(),
 ]);
 init();

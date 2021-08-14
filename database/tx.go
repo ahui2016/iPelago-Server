@@ -46,7 +46,21 @@ func scanIsland(row Row) (island Island, err error) {
 	return
 }
 
-func insertIsland(tx TX, island Island) error {
+func updateIsland(tx TX, island *Island) error {
+	_, err := tx.Exec(
+		stmt.UpdateIsland,
+		island.Name,
+		island.Email,
+		island.Avatar,
+		island.Link,
+		island.Note,
+		island.Hide,
+		island.ID,
+	)
+	return err
+}
+
+func insertIsland(tx TX, island *Island) error {
 	_, err := tx.Exec(
 		stmt.InsertIsland,
 		island.ID,

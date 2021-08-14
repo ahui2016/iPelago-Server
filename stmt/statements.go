@@ -65,7 +65,7 @@ const InsertIsland = `
 
 const UpdateIsland = `
   UPDATE island
-  SET name=?, email=?, avatar=?, link=?, hide=?
+  SET name=?, email=?, avatar=?, link=?, note=?, hide=?
   WHERE id=?;`
 
 const UpdateNote = `

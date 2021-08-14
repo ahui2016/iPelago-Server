@@ -73,7 +73,15 @@ func createIslandHandler(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return db.CreateIsland(*island)
+	return db.CreateIsland(island)
+}
+
+func updateIslandHandler(c echo.Context) error {
+	island, err := getFormIsland(c)
+	if err != nil {
+		return err
+	}
+	return db.UpdateIsland(island)
 }
 
 func getIslandHandler(c echo.Context) error {

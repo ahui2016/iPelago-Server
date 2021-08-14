@@ -26,6 +26,7 @@ func main() {
 	admin := e.Group("/admin", sleep, checkLogin)
 	admin.POST("/create-island", createIslandHandler)
 	admin.POST("/get-island", getIslandHandler)
+	admin.POST("/update-island", updateIslandHandler)
 	admin.GET("/all-islands", allIslands)
 	admin.POST("/more-island-messages", moreIslandMessages)
 

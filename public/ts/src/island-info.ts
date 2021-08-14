@@ -124,6 +124,7 @@ async function init() {
         EmailInput.elem().val(island.Email);
         AvatarInput.elem().val(island.Avatar);
         LinkInput.elem().val(island.Link);
+        NoteInput.elem().val(island.Note);
         if (island.Hide) {
           RadioPrivate.elem().prop('checked', true);
         } else {
