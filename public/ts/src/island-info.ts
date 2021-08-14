@@ -1,4 +1,4 @@
-import { mjElement, mjComponent, m, cc, mt } from './mj.js';
+import { mjElement, mjComponent, m, cc } from './mj.js';
 import * as util from './util.js';
 
 let islandID = util.getUrlParam('id');
@@ -18,6 +18,7 @@ const NameInput = cc('input');
 const AvatarInput = cc('input');
 const EmailInput = cc('input');
 const LinkInput = cc('input');
+const NoteInput = cc('input');
 const RadioPublic = cc('input', {
   classes:'form-check-input',
   attr:{type: 'radio', value: 'public', name: 'island-hide'},
@@ -32,6 +33,7 @@ const Form = cc('div', {classes:'vstack gap-3', children: [
   create_item(EmailInput, 'Email', '岛主的真实 email, 可作为后备联系方式。(可留空，但建议填写)'),
   create_item(AvatarInput, 'Avatar', '头像图片的网址，头像图片应为正方形，建议头像体积控制在 100KB 以下。请确保头像图片能跨域访问。(可留空)'),
   create_item(LinkInput, 'Link', '一个网址，可以是你的个人网站或博客，也可填写其他社交帐号的网址。(可留空)'),
+  create_item(NoteInput, 'Note', '关于该岛的备注，该内容只在本地使用，不会对外发布。'),
   m('div').addClass('hstack gap-3').append([
     m('div').text('是否公开:'),
     m('div').addClass('form-check form-check-inline').append([
@@ -80,10 +82,10 @@ const SubmitBtnArea = cc('div', {children:[
   }),
 
   m(MsgBtn).text('Messages').hide()
-    .attr({type:'button',href:'/public/messages?island='+islandID}),
+    .attr({type:'button',href:'/public/island-messages.html?id='+islandID}),
 
   m(NewsletterBtn).text('Publish').hide()
-    .attr({type:'button',href:'/public/newsletter?island='+islandID}),
+    .attr({type:'button',href:'/public/newsletter.html?id='+islandID}),
 ]});
 
 $('#root').append([
@@ -92,7 +94,7 @@ $('#root').append([
   m(Form).addClass('onLoggedIn').hide(),
   m(Alerts).addClass('my-3'),
   m(util.LoginArea).addClass('onLoggedOut'),
-  m(SubmitBtnArea).addClass('onLoggedIn my-5').hide(),
+  m(SubmitBtnArea).addClass('onLoggedIn my-5 text-end').hide(),
 ]);
 
 function create_item(comp: mjComponent, name: string, description: string): mjElement {
@@ -124,9 +126,7 @@ async function init() {
         LinkInput.elem().val(island.Link);
         if (island.Hide) {
           RadioPrivate.elem().prop('checked', true);
-          RadioPublic.elem().prop('checked', false);
         } else {
-          RadioPrivate.elem().prop('checked', false);
           RadioPublic.elem().prop('checked', true);
         }
       }, undefined, () => {
@@ -151,6 +151,7 @@ async function newIslandForm() {
   body.set('email', util.val(EmailInput).trim());
   body.set('avatar', avatarAddr);
   body.set('link', util.val(LinkInput).trim());
+  body.set('note', util.val(NoteInput).trim());
   body.set('hide', $('input[name="island-hide"]:checked').val() as string);
   return body;
 }

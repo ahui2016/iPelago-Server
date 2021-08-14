@@ -18,15 +18,16 @@ func main() {
 
 	e.File("/", "public/home.html")
 
-	api := e.Group("/api")
+	api := e.Group("/api", sleep)
 	api.GET("/login-status", getLoginStatus)
 	api.POST("/login", loginHandler)
 	api.GET("/logout", logoutHandler)
 
-	admin := e.Group("/admin", checkLogin)
+	admin := e.Group("/admin", sleep, checkLogin)
 	admin.POST("/create-island", createIslandHandler)
 	admin.POST("/get-island", getIslandHandler)
 	admin.GET("/all-islands", allIslands)
+	admin.POST("/more-island-messages", moreIslandMessages)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

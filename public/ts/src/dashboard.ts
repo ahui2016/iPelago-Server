@@ -1,8 +1,8 @@
-import { mjElement, mjComponent, m, cc, mt } from './mj.js';
+import { mjElement, mjComponent, m, cc, span } from './mj.js';
 import * as util from './util.js';
 
 const title = m('div').attr({id:'title'}).addClass('display-6 my-5 text-center').append([
-  mt('iPelago'), m('sup').text('online'),
+  span('iPelago'), m('sup').text('online'),
 ]);
 
 const Alerts = util.CreateAlerts();

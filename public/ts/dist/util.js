@@ -1,4 +1,6 @@
 import { m, cc } from './mj.js';
+// 每一页有多少条消息。注意：如果修改该数值，同时需要修改 database.go 中的 EveryPage
+export const everyPage = 99;
 // 获取地址栏的参数。
 export function getUrlParam(param) {
     var _a;
@@ -160,4 +162,7 @@ export function val(obj) {
     if ('elem' in obj)
         return obj.elem().val();
     return obj.val();
+}
+export function itemID(id) {
+    return `i${id}`;
 }

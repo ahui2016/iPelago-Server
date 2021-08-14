@@ -1,4 +1,4 @@
-import { mjElement, mjComponent, m, cc } from './mj.js';
+import { mjComponent, m, cc, appendToList } from './mj.js';
 import * as util from './util.js';
 
 const title = m('div').text('Islands').addClass('display-4 my-5 text-center');
@@ -6,19 +6,7 @@ const title = m('div').text('Islands').addClass('display-4 my-5 text-center');
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 
-interface mjIslandList extends mjComponent {
-  append: (islands: util.Island[]) => void;
-}
-
-const IslandList = cc('div', {classes:'vstack gap-3'}) as mjIslandList;
-
-IslandList.append = (islands) => {
-  islands.forEach(island => {
-    const item = IslandItem(island);
-    IslandList.elem().append(m(item));
-    item.init!();
-  });
-}
+const IslandList = cc('div', {classes:'vstack gap-3'});
 
 $('#root').append([
   title,
@@ -41,14 +29,10 @@ async function init() {
         Alerts.insert('info', '尚未订阅任何岛');
         return;
       }
-      IslandList.append(islands);
+      appendToList(IslandList, islands.map(IslandItem));
     }, undefined, () => {
       Loading.hide();
     });
-}
-
-function itemID(id: string): string {
-  return `i${id}`;
 }
 
 function IslandItem(island: util.Island): mjComponent {
@@ -57,9 +41,9 @@ function IslandItem(island: util.Island): mjComponent {
     avatar = island.Avatar;
   }
   const islandPage = '/public/island-info.html?id='+island.ID;
-  const datetime = dayjs.unix(island.Message.time).format('YYYY-MM-DD HH:mm:ss');
+  const datetime = dayjs.unix(island.Message.Time).format('YYYY-MM-DD HH:mm:ss');
   const ItemAlerts = util.CreateAlerts();
-  const self = cc('div', {id:itemID(island.ID), classes:'card', children:[
+  const self = cc('div', {id:util.itemID(island.ID), classes:'card', children:[
     m('div').addClass('card-body').append([
       m('ul').addClass('list-group list-group-flush').append([
         m('li').addClass('list-group-item d-flex justify-content-start align-items-start mb-1').append([
@@ -81,7 +65,7 @@ function IslandItem(island: util.Island): mjComponent {
               ItemAlerts.insert('primary', `小岛地址: ${location.origin}/public/${island.ID}.json`);
             }),
           ]),
-          m('span').addClass('small').text(island.Message.body),
+          m('span').addClass('small').text(island.Message.Body),
         ]),
       ]),
       m(ItemAlerts),

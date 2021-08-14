@@ -119,3 +119,20 @@ func getNextMsg(tx TX, id string, datetime int64) (SimpleMsg, error) {
 	simple := msg.ToSimple()
 	return *simple, err
 }
+
+func getMessages(tx TX, query string, args ...interface{}) (messages []*Message, err error) {
+	rows, err := tx.Query(query, args...)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		msg, err := scanMessage(rows)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, &msg)
+	}
+	err = rows.Err()
+	return
+}

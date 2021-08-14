@@ -10,8 +10,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// 每一页有多少条消息。注意：如果修改该数值，同时需要修改 util.js 中的 everyPage
-const OnePage = 99
+// 每一页有多少条消息。注意：如果修改该数值，同时需要修改 util.ts 中的 everyPage
+const EveryPage = 99
 
 const (
 	SecretKeyName = "secret-key" // for sessions
@@ -113,4 +113,10 @@ func (db *DB) AllIslands() (islands []*Island, err error) {
 		islands = append(islands, &island)
 	}
 	return islands, rows.Err()
+}
+
+// MoreIslandMessages 获取指定小岛的更多消息。
+func (db *DB) MoreIslandMessages(id string, datetime int64) (messages []*Message, err error) {
+	return getMessages(db.DB, stmt.GetMoreMessagesByIsland,
+		id, datetime, EveryPage)
 }

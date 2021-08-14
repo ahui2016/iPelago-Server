@@ -1,5 +1,8 @@
 import { mjElement, mjComponent, m, cc } from './mj.js';
 
+// 每一页有多少条消息。注意：如果修改该数值，同时需要修改 database.go 中的 EveryPage
+export const everyPage = 99;
+
 export interface Island {
   ID: string;
   Name: string;
@@ -9,9 +12,16 @@ export interface Island {
   Note: string;
   Hide: boolean;
   Message: {
-    time: number;
-    body: string;
+    Time: number;
+    Body: string;
   } 
+}
+
+export interface Message {
+  ID:       string;
+	IslandID: string;
+	Time:     number;
+	Body:     string;
 }
 
 // 获取地址栏的参数。
@@ -214,4 +224,8 @@ export const LoginArea = cc('div', {
 export function val(obj: mjElement | mjComponent): string {
   if ('elem' in obj) return obj.elem().val() as string
   return obj.val() as string
+}
+
+export function itemID(id: string): string {
+  return `i${id}`;
 }

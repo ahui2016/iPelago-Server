@@ -36,9 +36,11 @@ export function cc(name, options) {
         component.view.append(options.children);
     return component;
 }
-/**
- * 函数名 mt 意思是 make a text element, 用来创建一个纯文本元素。
- */
-export function mt(text) {
-    return document.createTextNode(text);
+export function span(text) {
+    return m('span').text(text);
+}
+export function appendToList(list, items) {
+    items.forEach(item => {
+        list.elem().append(m(item));
+    });
 }

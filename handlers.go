@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -95,6 +96,19 @@ func allIslands(c echo.Context) error {
 	return c.JSON(OK, islands)
 }
 
+func moreIslandMessages(c echo.Context) error {
+	id, e1 := getFormValue(c, "id")
+	datetime, e2 := getTimestamp(c)
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return err
+	}
+	messages, err := db.MoreIslandMessages(id, datetime)
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, messages)
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {
@@ -103,6 +117,14 @@ func getFormValue(c echo.Context, key string) (string, error) {
 		return "", fmt.Errorf("form value [%s] is empty", key)
 	}
 	return value, nil
+}
+
+func getTimestamp(c echo.Context) (int64, error) {
+	s := c.FormValue("time")
+	if s == "" {
+		return util.TimeNow(), nil
+	}
+	return strconv.ParseInt(s, 10, 0)
 }
 
 func getIslandHide(c echo.Context) bool {
@@ -134,6 +156,7 @@ func getFormIsland(c echo.Context) (island *Island, err error) {
 		Email:  strings.TrimSpace(c.FormValue("email")),
 		Avatar: avatar,
 		Link:   strings.TrimSpace(c.FormValue("link")),
+		Note:   strings.TrimSpace(c.FormValue("note")),
 		Hide:   getIslandHide(c),
 	}
 	return

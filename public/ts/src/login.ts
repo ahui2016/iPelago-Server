@@ -1,4 +1,4 @@
-import { mjElement, mjComponent, m, cc } from './mj.js';
+import { m, cc } from './mj.js';
 import * as util from './util.js';
 
 const title = m('div').text('iPelago Online').addClass('display-4 my-5 text-center');
