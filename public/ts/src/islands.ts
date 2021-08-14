@@ -60,8 +60,8 @@ function IslandItem(island: util.Island): mjComponent {
         m('li').addClass('list-group-item mb-1').append([
           m('div').addClass('Datetime small').append([
             m('span').addClass('text-muted').text(datetime),
-            m('span').text('private').addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
-            m('span').text('public').addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
+            m('span').text('private').attr({title:'本岛不对外公开'}).addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
+            m('span').text('public').attr({title:'点击查看小岛地址'}).addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
               ItemAlerts.insert('primary', `小岛地址: ${location.origin}/public/${island.ID}.json`);
             }),
           ]),
