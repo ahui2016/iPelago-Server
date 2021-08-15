@@ -120,9 +120,13 @@ func (db *DB) AllIslands() (islands []*Island, err error) {
 }
 
 // MoreIslandMessages 获取指定小岛的更多消息。
-func (db *DB) MoreIslandMessages(id string, datetime int64) (messages []*Message, err error) {
-	return getMessages(db.DB, stmt.GetMoreMessagesByIsland,
-		id, datetime, EveryPage)
+func (db *DB) MoreIslandMessages(id string, datetime int64) ([]*Message, error) {
+	return getMessages(db.DB, stmt.GetMoreMessagesByIsland, id, datetime, EveryPage)
+}
+
+// MorePublicMessages 获取全部公开小岛的更多消息。
+func (db *DB) MorePublicMessages(datetime int64) ([]*Message, error) {
+	return getMessages(db.DB, stmt.GetMorePublicMessages, datetime, EveryPage)
 }
 
 func (db *DB) PostMessage(body, islandID string) (*Message, error) {

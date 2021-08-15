@@ -1,14 +1,13 @@
 import { mjElement, mjComponent, m, cc, span } from './mj.js';
 import * as util from './util.js';
 
-const title = m('div').attr({id:'title'}).addClass('display-6 my-5 text-center').append([
-  span('iPelago'), m('sup').text('online'),
-]);
+const title = m('div').text('Dashboard').addClass('display-6 my-5 text-center');
 
 const Alerts = util.CreateAlerts();
 
 const Index = cc('div', {children: [
   m('div').append([
+    create_item('Timeline', '/public/timeline.html', '对外公开的时间线'),
     create_item('New Island', '/public/island-info.html', '新建小岛'),
     create_item('All Islands', '/public/islands.html', '我的全部小岛'),
   ]),

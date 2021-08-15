@@ -68,6 +68,30 @@ func loginHandler(c echo.Context) error {
 	return sess.Save(c.Request(), c.Response())
 }
 
+func getPublicIsland(c echo.Context) error {
+	id := c.FormValue("id")
+	island, err := db.GetIslandByID(id)
+	if err != nil {
+		return err
+	}
+	if island.Hide {
+		return fmt.Errorf("the island is hidden")
+	}
+	return c.JSON(OK, island)
+}
+
+func getIslandHandler(c echo.Context) error {
+	id, err := getFormValue(c, "id")
+	if err != nil {
+		return err
+	}
+	island, err := db.GetIslandByID(id)
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, island)
+}
+
 func createIslandHandler(c echo.Context) error {
 	island, err := getFormIsland(c)
 	if err != nil {
@@ -82,18 +106,6 @@ func updateIslandHandler(c echo.Context) error {
 		return err
 	}
 	return db.UpdateIsland(island)
-}
-
-func getIslandHandler(c echo.Context) error {
-	id, err := getFormValue(c, "id")
-	if err != nil {
-		return err
-	}
-	island, err := db.GetIslandByID(id)
-	if err != nil {
-		return err
-	}
-	return c.JSON(OK, island)
 }
 
 func allIslands(c echo.Context) error {
@@ -111,6 +123,18 @@ func moreIslandMessages(c echo.Context) error {
 		return err
 	}
 	messages, err := db.MoreIslandMessages(id, datetime)
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, messages)
+}
+
+func morePublicMessages(c echo.Context) error {
+	datetime, err := getTimestamp(c)
+	if err != nil {
+		return err
+	}
+	messages, err := db.MorePublicMessages(datetime)
 	if err != nil {
 		return err
 	}

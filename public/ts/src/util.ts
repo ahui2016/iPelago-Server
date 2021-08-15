@@ -3,6 +3,9 @@ import { mjElement, mjComponent, m, cc } from './mj.js';
 // 每一页有多少条消息。注意：如果修改该数值，同时需要修改 database.go 中的 EveryPage
 export const everyPage = 99;
 
+// 找出第一个链接
+export const httpRegex = /https?:\/\/[^\s,()!]+/;
+
 export interface Island {
   ID: string;
   Name: string;

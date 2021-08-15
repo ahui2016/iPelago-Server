@@ -81,7 +81,7 @@ const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(MoreBtn).text('More').on('click', getMessages),
     ] });
 $('#root').append([
-    m(TitleArea),
+    m(TitleArea).addClass('onLoggedIn'),
     m(InfoCard).hide(),
     m(MsgPostArea).addClass('mt-3').hide(),
     m(Alerts),
@@ -89,12 +89,16 @@ $('#root').append([
     m(MoreBtnAlerts).addClass('my-2'),
     m(Loading).addClass('my-5').hide(),
     m(MoreBtnArea).hide(),
+    m(util.LoginArea).addClass('onLoggedOut'),
 ]);
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
-    if (!isLoggedIn)
+    if (!isLoggedIn) {
+        Alerts.elem().addClass('mt-5');
+        TitleArea.elem().removeClass('d-flex');
         return;
+    }
     if (islandID) {
         Loading.show();
         const body = util.newFormData('id', islandID);
@@ -130,8 +134,8 @@ function getMessages() {
     });
 }
 function MsgItem(msg) {
-    const datetime = dayjs.unix(msg.Time).format('YYYY-MM-DD HH:mm:ss');
     const MsgAlerts = util.CreateAlerts();
+    const datetime = dayjs.unix(msg.Time).format('YYYY-MM-DD HH:mm:ss');
     return cc('div', { id: util.itemID(msg.ID), children: [
             m('div').text(datetime).addClass('small text-muted'),
             m('span').addClass('fs-5').text(msg.Body),

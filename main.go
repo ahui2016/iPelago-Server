@@ -22,6 +22,8 @@ func main() {
 	api.GET("/login-status", getLoginStatus)
 	api.POST("/login", loginHandler)
 	api.GET("/logout", logoutHandler)
+	api.GET("/get-island", getPublicIsland)
+	api.POST("/more-public-messages", morePublicMessages)
 
 	admin := e.Group("/admin", sleep, checkLogin)
 	admin.POST("/create-island", createIslandHandler)
