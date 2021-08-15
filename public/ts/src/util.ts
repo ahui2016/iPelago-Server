@@ -12,8 +12,8 @@ export interface Island {
   Note: string;
   Hide: boolean;
   Message: {
-    Time: number;
-    Body: string;
+    time: number;
+    body: string;
   } 
 }
 

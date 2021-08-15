@@ -81,6 +81,7 @@ const MsgPostArea = cc('div', {children:[
         return;        
       }
       const body = util.newFormData('msg-body', msgBody);
+      body.set('island-id', islandID);
       util.ajax({method:'POST',url:'/admin/post-message',alerts:Alerts,buttonID:PostBtn.id,body:body},
         (resp) => {
           const msg = resp as util.Message;
@@ -91,7 +92,7 @@ const MsgPostArea = cc('div', {children:[
   ),
 ]});
 
-const MsgList = cc('div', {classes:'vstack gap-3'});
+const MsgList = cc('div', {classes:'vstack gap-4'});
 
 const MoreBtn = cc('button', {classes:'btn btn-outline-secondary'});
 const MoreBtnAlerts = util.CreateAlerts();

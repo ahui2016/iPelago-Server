@@ -29,6 +29,7 @@ func main() {
 	admin.POST("/update-island", updateIslandHandler)
 	admin.GET("/all-islands", allIslands)
 	admin.POST("/more-island-messages", moreIslandMessages)
+	admin.POST("/post-message", postMessage)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

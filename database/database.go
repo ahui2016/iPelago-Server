@@ -124,3 +124,23 @@ func (db *DB) MoreIslandMessages(id string, datetime int64) (messages []*Message
 	return getMessages(db.DB, stmt.GetMoreMessagesByIsland,
 		id, datetime, EveryPage)
 }
+
+func (db *DB) PostMessage(body, islandID string) (*Message, error) {
+	if err := util.CheckStringSize(body, model.KB); err != nil {
+		return nil, err
+	}
+	msg := model.NewMessage(islandID, body)
+	err := db.InsertMessage(msg)
+	return msg, err
+}
+
+func (db *DB) InsertMessage(msg *Message) error {
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
+	if err := insertMsg(tx, msg); err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}

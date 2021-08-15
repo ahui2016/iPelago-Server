@@ -117,6 +117,18 @@ func moreIslandMessages(c echo.Context) error {
 	return c.JSON(OK, messages)
 }
 
+func postMessage(c echo.Context) error {
+	msgBody, err := getFormValue(c, "msg-body")
+	if err != nil {
+		return err
+	}
+	msg, err := db.PostMessage(msgBody, c.FormValue("island-id"))
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, msg)
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {
