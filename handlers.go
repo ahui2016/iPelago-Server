@@ -97,7 +97,10 @@ func createIslandHandler(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return db.CreateIsland(island)
+	if err := db.CreateIsland(island); err != nil {
+		return err
+	}
+	return c.JSON(OK, Text{island.ID})
 }
 
 func updateIslandHandler(c echo.Context) error {

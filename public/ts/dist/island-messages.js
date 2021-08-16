@@ -89,7 +89,7 @@ $('#root').append([
     m(MoreBtnAlerts).addClass('my-2'),
     m(Loading).addClass('my-5').hide(),
     m(MoreBtnArea).hide(),
-    m(util.LoginArea).addClass('onLoggedOut'),
+    m(util.LoginArea).addClass('onLoggedOut my-3'),
 ]);
 init();
 async function init() {

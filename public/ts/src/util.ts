@@ -218,11 +218,9 @@ export async function checkLogin(alerts?: mjAlerts): Promise<boolean> {
   return isLoggedIn;
 }
 
-export const LoginArea = cc('div', {
-  classes: 'text-center my-3',
-  children: [
-    m('a').text('Login').attr({href:'/public/login.html'}),
-  ]});
+export const LoginArea = cc('div', { classes: 'text-center', children: [
+  m('a').text('Login').attr({href:'/public/login.html'}),
+]});
 
 export function val(obj: mjElement | mjComponent): string {
   if ('elem' in obj) return obj.elem().val() as string

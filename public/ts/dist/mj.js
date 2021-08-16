@@ -41,6 +41,8 @@ export function span(text) {
 }
 export function appendToList(list, items) {
     items.forEach(item => {
+        var _a;
         list.elem().append(m(item));
+        (_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item);
     });
 }

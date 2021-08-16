@@ -50,8 +50,8 @@ function MsgItem(msg) {
     const self = cc('div', { id: util.itemID(msg.ID), classes: 'list-group-item d-flex justify-content-start align-items-start MsgItem mb-3', children: [
             m('a').addClass('AvatarLink').append(m('img').addClass('Avatar')),
             m('div').addClass('ms-3 flex-fill').append([
-                m('div').addClass('Nmae'),
-                m('div').addClass('Contents'),
+                m('div').addClass('Name'),
+                m('div').addClass('Contents fs-5'),
                 m('div').addClass('Datetime small text-muted text-end').text(datetime),
                 m(MsgAlerts),
             ]),
@@ -102,7 +102,7 @@ async function getIsland(id, alerts) {
 function getIslandByID(id) {
     const body = util.newFormData('id', id);
     return new Promise((resolve, reject) => {
-        util.ajax({ method: 'GET', url: '/api/get-island/', body: body }, (island) => {
+        util.ajax({ method: 'POST', url: '/api/get-island', body: body }, (island) => {
             resolve(island);
         }, (errMsg) => {
             reject(errMsg);

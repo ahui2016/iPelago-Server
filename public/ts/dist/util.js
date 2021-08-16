@@ -154,12 +154,9 @@ export async function checkLogin(alerts) {
     }
     return isLoggedIn;
 }
-export const LoginArea = cc('div', {
-    classes: 'text-center my-3',
-    children: [
+export const LoginArea = cc('div', { classes: 'text-center', children: [
         m('a').text('Login').attr({ href: '/public/login.html' }),
-    ]
-});
+    ] });
 export function val(obj) {
     if ('elem' in obj)
         return obj.elem().val();

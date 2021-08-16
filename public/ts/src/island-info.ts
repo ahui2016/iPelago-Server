@@ -60,8 +60,9 @@ const SubmitBtnArea = cc('div', {children:[
     try {
       const body = await newIslandForm();
       util.ajax({method:'POST',url:'/admin/create-island',alerts:Alerts,buttonID:CreateBtn.id,body:body},
-        (id) => {
-          islandID = id;
+        (resp) => {
+          islandID = resp.message;
+          MsgBtn.elem().attr({href:'/public/island-messages.html?id='+islandID});
           Alerts.insert('success', '建岛成功');
           $('.NewIsland').hide();
           $('.OldIsland').show();
@@ -93,7 +94,7 @@ $('#root').append([
   m(Loading).hide(),
   m(Form).addClass('onLoggedIn').hide(),
   m(Alerts).addClass('my-3'),
-  m(util.LoginArea).addClass('onLoggedOut'),
+  m(util.LoginArea).addClass('onLoggedOut my-3'),
   m(SubmitBtnArea).addClass('onLoggedIn my-5 text-end').hide(),
 ]);
 

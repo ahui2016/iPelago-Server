@@ -63,5 +63,6 @@ export function span(text: string): mjElement {
 export function appendToList(list: mjComponent, items: mjComponent[]): void {
   items.forEach(item => {
     list.elem().append(m(item));
+    item.init?.();
   });
 }

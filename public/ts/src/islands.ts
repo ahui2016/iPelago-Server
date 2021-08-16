@@ -13,6 +13,7 @@ $('#root').append([
   m(Loading).hide(),
   m(Alerts),
   m(IslandList).addClass('my-5'),
+  m(util.LoginArea).addClass('onLoggedOut'),
 ]);
 
 init();
