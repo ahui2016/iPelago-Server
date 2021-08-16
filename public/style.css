@@ -24,3 +24,13 @@ pre {
 .IslandPrivate {
     cursor: default;
 }
+
+.bi {
+    cursor: pointer;
+}
+.bi-trash {
+    color: #ccc;
+}
+.bi-trash:hover {
+    color: red;
+}

@@ -172,9 +172,9 @@ function MsgItem(msg: util.Message): mjComponent {
     m(MsgAlerts),
   ]});
 
-  const selfElem = self.elem();
-  self.init = () => {
-    selfElem.find('.DeleteBtn').on('click', () => {
+  self.init = () => {    
+    const selfElem = self.elem();
+    selfElem.find('.DeleteBtn').on('click', () => {  
       const body = util.newFormData('message-id', msg.ID);
       body.set('island-id', msg.IslandID);
       util.ajax({method:'POST',url:'/admin/delete-message',alerts:MsgAlerts,buttonID:`${self.id} .DeleteBtn`,body:body},
