@@ -152,3 +152,14 @@ func (db *DB) InsertMessage(msg *Message) error {
 func (db *DB) DeleteIsland(id string) error {
 	return db.Exec(stmt.DeleteIsland, id)
 }
+
+func (db *DB) DeleteMessage(msgID, islandID string) error {
+	n, err := getInt1(db.DB, stmt.CountMessages, islandID)
+	if err != nil {
+		return err
+	}
+	if n < 2 {
+		return fmt.Errorf("至少需要保留一条消息")
+	}
+	return db.Exec(stmt.DeleteMessage, msgID)
+}

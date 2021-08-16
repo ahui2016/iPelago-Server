@@ -1,4 +1,4 @@
-import { mjComponent, m, cc, appendToList } from './mj.js';
+import { mjComponent, m, cc, span, appendToList } from './mj.js';
 import * as util from './util.js';
 
 const islandID = util.getUrlParam('id');
@@ -12,7 +12,7 @@ const TitleArea = cc('div', {
   classes: 'd-flex justify-content-between align-items-center my-3',
   children: [
     m('a').attr({href:'/',title:'home'}).addClass('onLoggedOut btn btn-outline-dark').append(
-      m('i').addClass('bi bi-house')
+      m('i').addClass('bi bi-house-door')
     ),
     m('a').attr({href:islandInfoPage,title:'编辑小岛信息'}).addClass('onLoggedIn btn btn-outline-dark').append(
       m('i').addClass('bi bi-pencil')
@@ -162,11 +162,31 @@ function getMessages(): void {
 function MsgItem(msg: util.Message): mjComponent {
   const MsgAlerts = util.CreateAlerts();
   const datetime = dayjs.unix(msg.Time).format('YYYY-MM-DD HH:mm:ss');
-  return cc('div', {id:util.itemID(msg.ID), children:[
-    m('div').text(datetime).addClass('small text-muted'),
-    m('span').addClass('fs-5').text(msg.Body),
+  const self = cc('div', {id:util.itemID(msg.ID), children:[
+    m('div').addClass('small text-muted').append([
+      span(datetime),
+      span('DELETED').addClass('Deleted badge bg-secondary ms-1').hide(),
+      m('i').addClass('DeleteBtn bi bi-trash ms-1').attr({title:'delete'}),
+    ]),
+    m('span').addClass('Contents fs-5').text(msg.Body),
     m(MsgAlerts),
   ]});
+
+  const selfElem = self.elem();
+  self.init = () => {
+    selfElem.find('.DeleteBtn').on('click', () => {
+      const body = util.newFormData('message-id', msg.ID);
+      body.set('island-id', msg.IslandID);
+      util.ajax({method:'POST',url:'/admin/delete-message',alerts:MsgAlerts,buttonID:`${self.id} .DeleteBtn`,body:body},
+        () => {
+          selfElem.find('.Contents').removeClass('fs-5').addClass('text-muted');
+          selfElem.find('.Deleted').toggle();
+          selfElem.find('.DeleteBtn').toggle();
+        });
+    });
+  };
+
+  return self;
 }
 
 (window as any).danger_delete_island = () => {

@@ -29,10 +29,11 @@ func main() {
 	admin.POST("/create-island", createIslandHandler)
 	admin.POST("/get-island", getIslandHandler)
 	admin.POST("/update-island", updateIslandHandler)
+	admin.POST("/delete-island", deleteIsland)
 	admin.GET("/all-islands", allIslands)
 	admin.POST("/more-island-messages", moreIslandMessages)
 	admin.POST("/post-message", postMessage)
-	admin.POST("/delete-island", deleteIsland)
+	admin.POST("/delete-message", deleteMessage)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

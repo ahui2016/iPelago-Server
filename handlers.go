@@ -156,6 +156,15 @@ func postMessage(c echo.Context) error {
 	return c.JSON(OK, msg)
 }
 
+func deleteMessage(c echo.Context) error {
+	islandID, e1 := getFormValue(c, "island-id")
+	msgID, e2 := getFormValue(c, "message-id")
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return err
+	}
+	return db.DeleteMessage(msgID, islandID)
+}
+
 func deleteIsland(c echo.Context) error {
 	id, err := getFormValue(c, "id")
 	if err != nil {
