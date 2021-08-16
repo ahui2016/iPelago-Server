@@ -1,6 +1,9 @@
-import { m, cc, appendToList } from './mj.js';
+import { m, cc, span, appendToList } from './mj.js';
 import * as util from './util.js';
-const title = m('div').text('Islands').addClass('display-4 my-5 text-center');
+const title = m('div').addClass('display-4 my-5 text-center').append([
+    span('Islands'),
+    m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-sm btn-outline-dark ms-1').append(m('i').addClass('bi bi-gear')),
+]);
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 const IslandList = cc('div', { classes: 'vstack gap-3' });

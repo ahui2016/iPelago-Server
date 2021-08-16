@@ -7,7 +7,12 @@ let lastTime = dayjs().unix();
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 
-const title = m('div').text('Timeline').addClass('display-4 my-5 text-center');
+const title = m('div').addClass('display-4 my-5 text-center').append([
+  span('Timeline'),
+  m('a').attr({href:'/public/dashboard.html',title:'dashboard'}).addClass('btn btn-sm btn-outline-dark ms-1').append(
+    m('i').addClass('bi bi-gear')
+  ),
+]);
 
 const MsgList = cc('ul', {classes:'list-group list-group-flush'});
 
@@ -20,16 +25,13 @@ $('#root').append([
   title,
   m(MsgList),
   m(Alerts),
-  m(Loading).addClass('my-5'),
+  m(Loading).addClass('my-5').hide(),
   m(MoreBtnArea).hide(),
-  m(util.LoginArea).addClass('onLoggedOut'),
 ]);
 
 init();
 
 async function init() {
-  const isLoggedIn = await util.checkLogin(Alerts);
-  if (!isLoggedIn) return;
   getPublicMessages();
 }
 

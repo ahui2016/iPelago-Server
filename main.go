@@ -16,7 +16,7 @@ func main() {
 
 	e.Static("/public", "public")
 
-	e.File("/", "public/home.html")
+	e.File("/", "public/timeline.html")
 
 	api := e.Group("/api", sleep)
 	api.GET("/login-status", getLoginStatus)
@@ -32,6 +32,7 @@ func main() {
 	admin.GET("/all-islands", allIslands)
 	admin.POST("/more-island-messages", moreIslandMessages)
 	admin.POST("/post-message", postMessage)
+	admin.POST("/delete-island", deleteIsland)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

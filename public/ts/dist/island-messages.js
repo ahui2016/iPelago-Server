@@ -8,8 +8,9 @@ const Loading = util.CreateLoading();
 const TitleArea = cc('div', {
     classes: 'd-flex justify-content-between align-items-center my-3',
     children: [
-        m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-outline-dark').append(m('i').addClass('bi bi-gear')),
-        m('a').attr({ href: islandInfoPage, title: '编辑小岛信息' }).addClass('btn btn-outline-dark').append(m('i').addClass('bi bi-pencil')),
+        m('a').attr({ href: '/', title: 'home' }).addClass('onLoggedOut btn btn-outline-dark').append(m('i').addClass('bi bi-house')),
+        m('a').attr({ href: islandInfoPage, title: '编辑小岛信息' }).addClass('onLoggedIn btn btn-outline-dark').append(m('i').addClass('bi bi-pencil')).hide(),
+        m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('onLoggedIn btn btn-outline-dark').append(m('i').addClass('bi bi-gear')).hide(),
     ]
 });
 const InfoAlerts = util.CreateAlerts();
@@ -81,7 +82,7 @@ const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(MoreBtn).text('More').on('click', getMessages),
     ] });
 $('#root').append([
-    m(TitleArea).addClass('onLoggedIn'),
+    m(TitleArea),
     m(InfoCard).hide(),
     m(MsgPostArea).addClass('mt-3').hide(),
     m(Alerts),
@@ -94,11 +95,8 @@ $('#root').append([
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
-    if (!isLoggedIn) {
-        Alerts.elem().addClass('mt-5');
-        TitleArea.elem().removeClass('d-flex');
+    if (!isLoggedIn)
         return;
-    }
     if (islandID) {
         Loading.show();
         const body = util.newFormData('id', islandID);
@@ -142,3 +140,16 @@ function MsgItem(msg) {
             m(MsgAlerts),
         ] });
 }
+window.danger_delete_island = () => {
+    const body = util.newFormData('id', islandID);
+    util.ajax({ method: 'POST', url: '/admin/delete-island', alerts: Alerts, body: body }, () => {
+        TitleArea.elem().hide();
+        InfoCard.elem().hide();
+        MsgPostArea.elem().hide();
+        MsgList.elem().hide();
+        MoreBtnArea.elem().hide();
+        const msg = '该岛及其全部消息已被删除。';
+        Alerts.clear().insert('success', msg);
+        console.log(msg);
+    });
+};

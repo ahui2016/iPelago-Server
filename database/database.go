@@ -148,3 +148,7 @@ func (db *DB) InsertMessage(msg *Message) error {
 
 	return tx.Commit()
 }
+
+func (db *DB) DeleteIsland(id string) error {
+	return db.Exec(stmt.DeleteIsland, id)
+}

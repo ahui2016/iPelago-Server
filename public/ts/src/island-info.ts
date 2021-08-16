@@ -118,6 +118,12 @@ async function init() {
     util.ajax({method:'POST',url:'/admin/get-island',alerts:Alerts,body:body},
       (resp) => {
         const island = resp as util.Island;
+        if (!island.ID) {
+          Form.elem().hide();
+          SubmitBtnArea.elem().hide();
+          Alerts.insert('danger', `找不到小岛(id: ${islandID})`);
+          return;
+        }
         $('.NewIsland').hide();
         $('.OldIsland').show();
         Title.elem().text('小岛信息');
@@ -163,4 +169,16 @@ async function checkAvatarSize(avatarAddr: string) {
     method:'GET',url:avatarAddr,responseType:'blob',alerts:Alerts
   }, 10);
   if (avatar.size > 500 * 1024) { throw '头像图片体积太大' }
+}
+
+(window as any).danger_delete_island = () => {
+  const body = util.newFormData('id', islandID);
+  util.ajax({method:'POST',url:'/admin/delete-island',alerts:Alerts,body:body},
+    () => {
+      Form.elem().hide();
+      SubmitBtnArea.elem().hide();
+      const msg = '该岛及其全部消息已被删除。';
+      Alerts.clear().insert('success', msg);
+      console.log(msg);
+    });
 }
