@@ -18,16 +18,15 @@ pre {
     border-radius: 5%;
 }
 
-.IslandPublic {
+.CursorPointer {
     cursor: pointer;
+    text-decoration: none;
 }
+
 .IslandPrivate {
     cursor: default;
 }
 
-.bi {
-    cursor: pointer;
-}
 .bi-trash {
     color: #ccc;
 }

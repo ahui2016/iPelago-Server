@@ -47,6 +47,7 @@ function IslandItem(island: util.Island): mjComponent {
     avatar = island.Avatar;
   }
   const islandPage = '/public/island-info.html?id='+island.ID;
+  const islandMsgPage = '/public/island-messages.html?id='+island.ID;
   const datetime = dayjs.unix(island.Message.time).format('YYYY-MM-DD HH:mm:ss');
   const ItemAlerts = util.CreateAlerts();
   const self = cc('div', {id:util.itemID(island.ID), classes:'card', children:[
@@ -54,11 +55,11 @@ function IslandItem(island: util.Island): mjComponent {
       m('ul').addClass('list-group list-group-flush').append([
         m('li').addClass('list-group-item d-flex justify-content-start align-items-start').append([
           m('a').addClass('AvatarLink').attr({href:islandPage}).append(
-            m('img').addClass('Avatar').attr({src:avatar,alt:'avatar'})
+            m('img').addClass('Avatar').attr({src:avatar,alt:'avatar',title:'编辑小岛资料'})
           ),
           m('div').addClass('ms-3').append([
             m('p').addClass('CardTitle').append(
-              m('a').text(island.Name).attr({href:islandPage})
+              m('a').text(island.Name).attr({href:islandPage,title:'编辑小岛资料'})
                 .addClass('text-decoration-none text-dark fw-bold')
             ),
           ]),
@@ -67,9 +68,11 @@ function IslandItem(island: util.Island): mjComponent {
           m('div').addClass('small').append([
             m('span').addClass('text-muted').text(datetime),
             m('span').text('private').attr({title:'本岛不对外公开'}).addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
-            m('span').text('public').attr({title:'点击查看小岛地址'}).addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
+            m('span').text('public').attr({title:'点击查看小岛地址'}).addClass('CursorPointer IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
               ItemAlerts.insert('primary', `小岛地址: ${location.origin}/public/${island.ID}.json`);
             }),
+            m('a').text('messages').attr({href:islandMsgPage})
+              .addClass('CursorPointer ms-2 badge rounded-pill bg-secondary link-secondary text-white'),
           ]),
           m('span').addClass('small').text(island.Message.body),
         ]),
