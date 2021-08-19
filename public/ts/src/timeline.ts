@@ -3,6 +3,7 @@ import * as util from './util.js';
 
 const allIslands = new Map<string, util.Island>();
 let lastTime = dayjs().unix();
+let firstTime = true;
 
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
@@ -42,7 +43,12 @@ function getPublicMessages(): void {
     (resp) => {
       const messages = resp as util.Message[];
       if (!messages || messages.length == 0) {
-        Alerts.insert('primary', '没有更多消息了');
+        if (firstTime) {
+          Alerts.insert('primary', '没有公开消息');
+          firstTime = false;
+        } else {
+          Alerts.insert('primary', '没有更多消息了');
+        }
         MoreBtnArea.elem().hide();
         return;
       }

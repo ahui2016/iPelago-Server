@@ -2,6 +2,7 @@ import { m, cc, span, appendToList } from './mj.js';
 import * as util from './util.js';
 const allIslands = new Map();
 let lastTime = dayjs().unix();
+let firstTime = true;
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 const title = m('div').addClass('display-4 my-5 text-center').append([
@@ -30,7 +31,13 @@ function getPublicMessages() {
     util.ajax({ method: 'POST', url: '/api/more-public-messages', alerts: Alerts, body: body }, (resp) => {
         const messages = resp;
         if (!messages || messages.length == 0) {
-            Alerts.insert('primary', '没有更多消息了');
+            if (firstTime) {
+                Alerts.insert('primary', '没有公开消息');
+                firstTime = false;
+            }
+            else {
+                Alerts.insert('primary', '没有更多消息了');
+            }
             MoreBtnArea.elem().hide();
             return;
         }

@@ -95,7 +95,7 @@ $('#root').append([
   m(Form).addClass('onLoggedIn').hide(),
   m(Alerts).addClass('my-3'),
   m(util.LoginArea).addClass('onLoggedOut my-3'),
-  m(SubmitBtnArea).addClass('onLoggedIn my-5 text-end').hide(),
+  m(SubmitBtnArea).addClass('onLoggedIn mb-5 text-end').hide(),
 ]);
 
 function create_item(comp: mjComponent, name: string, description: string): mjElement {

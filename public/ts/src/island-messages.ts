@@ -31,7 +31,7 @@ const InfoCard = cc('div', {classes:'card',children:[
       m('div').append([
         m('span').addClass('Name fw-bold'),
         m('span').text('private').attr({title:'本岛不对外公开'}).addClass('IslandPrivate ms-2 badge rounded-pill bg-dark').hide(),
-        m('span').text('public').attr({title:'点击查看小岛地址'}).addClass('IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
+        m('span').text('public').attr({title:'点击查看小岛地址'}).addClass('CursorPointer IslandPublic ms-2 badge rounded-pill bg-success').on('click', () => {
           InfoAlerts.insert('primary', `小岛地址: ${location.origin}/public/${islandID}.json`);
         }),
       ]),
@@ -88,8 +88,10 @@ const MsgPostArea = cc('div', {children:[
       util.ajax({method:'POST',url:'/admin/post-message',alerts:Alerts,buttonID:PostBtn.id,body:body},
         (resp) => {
           const msg = resp as util.Message;
-          MsgList.elem().prepend(m(MsgItem(msg)));
-          MsgInput.elem().trigger('focus');
+          const item = MsgItem(msg);
+          MsgList.elem().prepend(m(item));
+          item.init?.();
+          MsgInput.elem().val('').trigger('focus');
         });
     })
   ),
@@ -166,7 +168,7 @@ function MsgItem(msg: util.Message): mjComponent {
     m('div').addClass('small text-muted').append([
       span(datetime),
       span('DELETED').addClass('Deleted badge bg-secondary ms-1').hide(),
-      m('i').addClass('DeleteBtn bi bi-trash ms-1').attr({title:'delete'}),
+      m('i').addClass('CursorPointer DeleteBtn bi bi-trash ms-1').attr({title:'delete'}),
     ]),
     m('span').addClass('Contents fs-5').text(msg.Body),
     m(MsgAlerts),
