@@ -4,6 +4,7 @@ import * as util from './util.js';
 const islandID = util.getUrlParam('id');
 const islandInfoPage = '/public/island-info.html?id='+islandID;
 let lastTime = dayjs().unix();
+let islandHide = 'public';
 
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
@@ -47,6 +48,7 @@ InfoCard.init = (arg) => {
   }
   InfoCard.elem().find('.Name').text(island.Name);
   if (island.Hide) {
+    islandHide = 'private';
     InfoCard.elem().find('.IslandPublic').hide();
     InfoCard.elem().find('.IslandPrivate').show();
   }
@@ -85,6 +87,7 @@ const MsgPostArea = cc('div', {children:[
       }
       const body = util.newFormData('msg-body', msgBody);
       body.set('island-id', islandID);
+      body.set('hide', islandHide);
       util.ajax({method:'POST',url:'/admin/post-message',alerts:Alerts,buttonID:PostBtn.id,body:body},
         (resp) => {
           const msg = resp as util.Message;
@@ -97,7 +100,7 @@ const MsgPostArea = cc('div', {children:[
   ),
 ]});
 
-const MsgList = cc('div', {classes:'vstack gap-4'});
+const MsgList = cc('div', {classes:'vstack gap-4 mb-5'});
 
 const MoreBtn = cc('button', {classes:'btn btn-outline-secondary'});
 const MoreBtnAlerts = util.CreateAlerts();
@@ -111,7 +114,7 @@ $('#root').append([
   m(MsgPostArea).addClass('mt-3').hide(),
   m(Alerts),
   m(MsgList),
-  m(MoreBtnAlerts).addClass('my-2'),
+  m(MoreBtnAlerts).addClass('my-5'),
   m(Loading).addClass('my-5').hide(),
   m(MoreBtnArea).hide(),
   m(util.LoginArea).addClass('onLoggedOut my-3'),

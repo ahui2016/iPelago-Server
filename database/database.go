@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	"github.com/ahui2016/iPelago-Server/model"
 	"github.com/ahui2016/iPelago-Server/stmt"
@@ -11,7 +12,7 @@ import (
 )
 
 // 每一页有多少条消息。注意：如果修改该数值，同时需要修改 util.ts 中的 everyPage
-const EveryPage = 99
+const EveryPage = 10 // 99
 
 const (
 	SecretKeyName = "secret-key" // for sessions
@@ -77,7 +78,23 @@ func (db *DB) CheckPassword(userInputPwd string) error {
 }
 
 func (db *DB) UpdateIsland(island *Island) error {
-	return updateIsland(db.DB, island)
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
+	if err := updateIsland(tx, island); err != nil {
+		return err
+	}
+	if island.Hide {
+		if err := os.Remove(islandAddress(island.ID)); err != nil {
+			return err
+		}
+	} else {
+		if err := publishNewsletter(tx, island.ID); err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (db *DB) CreateIsland(island *Island) error {
@@ -86,7 +103,8 @@ func (db *DB) CreateIsland(island *Island) error {
 
 	e1 := insertIsland(tx, island)
 	e2 := insertFirsstMsg(tx, island.ID, island.Name)
-	if err := util.WrapErrors(e1, e2); err != nil {
+	e3 := publishNewsletter(tx, island.ID)
+	if err := util.WrapErrors(e1, e2, e3); err != nil {
 		return err
 	}
 	return tx.Commit()
@@ -129,24 +147,28 @@ func (db *DB) MorePublicMessages(datetime int64) ([]*Message, error) {
 	return getMessages(db.DB, stmt.GetMorePublicMessages, datetime, EveryPage)
 }
 
-func (db *DB) PostMessage(body, islandID string) (*Message, error) {
+func (db *DB) PostMessage(body, islandID string, islandHide bool) (*Message, error) {
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
 	if err := util.CheckStringSize(body, model.KB); err != nil {
 		return nil, err
 	}
 	msg := model.NewMessage(islandID, body)
-	err := db.InsertMessage(msg)
-	return msg, err
-}
-
-func (db *DB) InsertMessage(msg *Message) error {
-	tx := db.mustBegin()
-	defer tx.Rollback()
-
 	if err := insertMsg(tx, msg); err != nil {
-		return err
+		return nil, err
 	}
 
-	return tx.Commit()
+	if !islandHide {
+		if err := publishNewsletter(tx, islandID); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return msg, nil
 }
 
 func (db *DB) DeleteIsland(id string) error {

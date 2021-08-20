@@ -2,9 +2,12 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
+	"github.com/ahui2016/iPelago-Server/model"
 	"github.com/ahui2016/iPelago-Server/stmt"
 	"github.com/ahui2016/iPelago-Server/util"
 )
@@ -149,4 +152,69 @@ func getMessages(tx TX, query string, args ...interface{}) (messages []*Message,
 	}
 	err = rows.Err()
 	return
+}
+
+func publishMessages(tx TX, islandID string) (messages []*SimpleMsg, err error) {
+	totalSize := 0
+	nextTime := util.TimeNow() + 1 // 考虑到添加新消息后立即发布，需要加一秒才能包含最新的消息。
+	for {
+		msg, err := getNextMsg(tx, islandID, nextTime)
+		if err == sql.ErrNoRows {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		totalSize += len(msg.Body)
+		if totalSize > model.MsgSizeLimitBase {
+			break
+		}
+		messages = append(messages, &msg)
+		nextTime = msg.Time
+	}
+	return
+}
+
+func getNewsletter(tx TX, islandID string) ([]byte, error) {
+	myIsland, e1 := getIslandByID(tx, islandID)
+	messages, e2 := publishMessages(tx, islandID)
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return nil, err
+	}
+	newsletter := Newsletter{
+		Name:     myIsland.Name,
+		Email:    myIsland.Email,
+		Avatar:   myIsland.Avatar,
+		Link:     myIsland.Link,
+		Messages: messages,
+	}
+	return json.MarshalIndent(newsletter, "", "  ")
+}
+
+func newsletterHalf(data []byte) ([]byte, error) {
+	var newsletter Newsletter
+	if err := json.Unmarshal(data, &newsletter); err != nil {
+		return nil, err
+	}
+	length := len(newsletter.Messages)
+	newsletter.Messages = newsletter.Messages[:length/2]
+	return json.MarshalIndent(newsletter, "", "  ")
+}
+
+func publishNewsletter(tx TX, id string) error {
+	newsletter, err := getNewsletter(tx, id)
+	if err != nil {
+		return err
+	}
+	for length := len(newsletter); length >= model.MsgSizeLimit; {
+		newsletter, err = newsletterHalf(newsletter)
+		if err != nil {
+			return err
+		}
+	}
+	return os.WriteFile(islandAddress(id), newsletter, 0644)
+}
+
+func islandAddress(id string) string {
+	return fmt.Sprintf("public/%s.json", id)
 }

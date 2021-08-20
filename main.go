@@ -26,9 +26,9 @@ func main() {
 	api.POST("/more-public-messages", morePublicMessages)
 
 	admin := e.Group("/admin", sleep, checkLogin)
-	admin.POST("/create-island", createIslandHandler)
-	admin.POST("/get-island", getIslandHandler)
-	admin.POST("/update-island", updateIslandHandler)
+	admin.POST("/create-island", createIsland)
+	admin.POST("/get-island", getIsland)
+	admin.POST("/update-island", updateIsland)
 	admin.POST("/delete-island", deleteIsland)
 	admin.GET("/all-islands", allIslands)
 	admin.POST("/more-island-messages", moreIslandMessages)

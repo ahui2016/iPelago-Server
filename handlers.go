@@ -80,7 +80,7 @@ func getPublicIsland(c echo.Context) error {
 	return c.JSON(OK, island)
 }
 
-func getIslandHandler(c echo.Context) error {
+func getIsland(c echo.Context) error {
 	id, err := getFormValue(c, "id")
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func getIslandHandler(c echo.Context) error {
 	return c.JSON(OK, island)
 }
 
-func createIslandHandler(c echo.Context) error {
+func createIsland(c echo.Context) error {
 	island, err := getFormIsland(c)
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func createIslandHandler(c echo.Context) error {
 	return c.JSON(OK, Text{island.ID})
 }
 
-func updateIslandHandler(c echo.Context) error {
+func updateIsland(c echo.Context) error {
 	island, err := getFormIsland(c)
 	if err != nil {
 		return err
@@ -145,11 +145,14 @@ func morePublicMessages(c echo.Context) error {
 }
 
 func postMessage(c echo.Context) error {
-	msgBody, err := getFormValue(c, "msg-body")
-	if err != nil {
+	islandID, e1 := getFormValue(c, "island-id")
+	msgBody, e2 := getFormValue(c, "msg-body")
+	hide, e3 := getIslandHide(c)
+	if err := util.WrapErrors(e1, e2, e3); err != nil {
 		return err
 	}
-	msg, err := db.PostMessage(msgBody, c.FormValue("island-id"))
+
+	msg, err := db.PostMessage(msgBody, islandID, hide)
 	if err != nil {
 		return err
 	}
@@ -191,9 +194,16 @@ func getTimestamp(c echo.Context) (int64, error) {
 	return strconv.ParseInt(s, 10, 0)
 }
 
-func getIslandHide(c echo.Context) bool {
-	value := c.FormValue("hide")
-	return value == "private"
+func getIslandHide(c echo.Context) (bool, error) {
+	hide := c.FormValue("hide")
+	switch hide {
+	case "private":
+		return true, nil
+	case "public":
+		return false, nil
+	default:
+		return false, fmt.Errorf("the FormValue(\"hide\"):%s is not valid", hide)
+	}
 }
 
 func getFormIsland(c echo.Context) (island *Island, err error) {
@@ -214,6 +224,11 @@ func getFormIsland(c echo.Context) (island *Island, err error) {
 		}
 	}
 
+	hide, err := getIslandHide(c)
+	if err != nil {
+		return
+	}
+
 	island = &Island{
 		ID:     id,
 		Name:   name,
@@ -221,7 +236,7 @@ func getFormIsland(c echo.Context) (island *Island, err error) {
 		Avatar: avatar,
 		Link:   strings.TrimSpace(c.FormValue("link")),
 		Note:   strings.TrimSpace(c.FormValue("note")),
-		Hide:   getIslandHide(c),
+		Hide:   hide,
 	}
 	return
 }
