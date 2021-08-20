@@ -15,7 +15,7 @@ const title = m('div').addClass('display-4 my-5 text-center').append([
   ),
 ]);
 
-const MsgList = cc('ul', {classes:'list-group list-group-flush'});
+const MsgList = cc('ul', {classes:'list-group list-group-flush my-5'});
 
 const MoreBtn = cc('button', {classes:'btn btn-outline-secondary'});
 const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
@@ -25,9 +25,9 @@ const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
 $('#root').append([
   title,
   m(MsgList),
-  m(Alerts),
+  m(Alerts).addClass('my-5'),
   m(Loading).addClass('my-5').hide(),
-  m(MoreBtnArea).hide(),
+  m(MoreBtnArea),
 ]);
 
 init();
