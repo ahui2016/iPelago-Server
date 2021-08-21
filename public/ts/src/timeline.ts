@@ -38,17 +38,18 @@ async function init() {
 
 function getPublicMessages(): void {
   Loading.show();
+  if (firstTime) {
+    var infoMsg = '没有公开消息';
+    firstTime = false;
+  } else {
+    var infoMsg = '没有更多消息了';
+  }
   const body = util.newFormData('time', lastTime.toString());
   util.ajax({method:'POST',url:'/api/more-public-messages',alerts:Alerts,body:body},
     (resp) => {
       const messages = resp as util.Message[];
       if (!messages || messages.length == 0) {
-        if (firstTime) {
-          Alerts.insert('primary', '没有公开消息');
-          firstTime = false;
-        } else {
-          Alerts.insert('primary', '没有更多消息了');
-        }
+        Alerts.insert('primary', infoMsg);
         MoreBtnArea.elem().hide();
         return;
       }
