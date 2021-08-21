@@ -19,15 +19,3 @@ declare namespace dayjs {
 
   export function unix(t: number): Dayjs;
 }
-
-/*
-interface Dayjs {
-  format(template?: string): string
-}
-
-type dayjs = Dayjs;
-
-declare function dayjs(): Dayjs;
-
-declare function unix(t:number): Dayjs;
-*/

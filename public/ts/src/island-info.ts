@@ -3,6 +3,9 @@ import * as util from './util.js';
 
 let islandID = util.getUrlParam('id');
 
+const Alerts = util.CreateAlerts();
+const Loading = util.CreateLoading();
+
 const Title = cc('div', {classes: 'display-6'});
 const TitleArea = cc('div', {
   classes: 'd-flex justify-content-between align-items-center my-5',
@@ -47,13 +50,10 @@ const Form = cc('div', {classes:'vstack gap-3', children: [
   ]),
 ]});
 
-const Alerts = util.CreateAlerts();
-const Loading = util.CreateLoading();
-
 const CreateBtn = cc('button', {classes:'NewIsland btn btn-primary me-2'});
 const UpdateBtn = cc('button', {classes:'OldIsland btn btn-primary me-2'});
 const MsgBtn = cc('a', {classes:'OldIsland btn btn-secondary me-2'});
-const NewsletterBtn = cc('a', {classes:'OldIsland btn btn-secondary'});
+const NewsletterBtn = cc('a', {classes:'btn btn-secondary'});
 
 const SubmitBtnArea = cc('div', {children:[
   m(CreateBtn).text('Create').on('click', async () => {
@@ -66,6 +66,9 @@ const SubmitBtnArea = cc('div', {children:[
           Alerts.insert('success', '建岛成功');
           $('.NewIsland').hide();
           $('.OldIsland').show();
+          if (body.get('hide') == 'public') {
+            NewsletterBtn.elem().show();
+          }
         });
     } catch (errMsg) {
       Alerts.insert('danger', errMsg);
@@ -76,17 +79,24 @@ const SubmitBtnArea = cc('div', {children:[
     try {
       const body = await newIslandForm();
       util.ajax({method:'POST',url:'/admin/update-island',alerts:Alerts,buttonID:UpdateBtn.id,body:body},
-        () => { Alerts.insert('success', '更新成功') });
+        () => {
+          if (body.get('hide') == 'public') {
+            NewsletterBtn.elem().show();
+          } else {
+            NewsletterBtn.elem().hide();
+          }
+          Alerts.insert('success', '更新成功')
+        });
     } catch (errMsg) {
       Alerts.insert('danger', errMsg);
     }
   }),
 
   m(MsgBtn).text('Messages').hide()
-    .attr({type:'button',href:'/public/island-messages.html?id='+islandID}),
+    .attr({href:'/public/island-messages.html?id='+islandID}),
 
   m(NewsletterBtn).text('Publish').hide()
-    .attr({type:'button',href:'/public/newsletter.html?id='+islandID}),
+    .attr({href:'/public/publish.html?id='+islandID}),
 ]});
 
 $('#root').append([
@@ -126,6 +136,9 @@ async function init() {
         }
         $('.NewIsland').hide();
         $('.OldIsland').show();
+        if (!island.Hide) {
+          NewsletterBtn.elem().show();
+        }
         Title.elem().text('小岛信息');
         NameInput.elem().val(island.Name);
         EmailInput.elem().val(island.Email);
