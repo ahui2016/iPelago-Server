@@ -3,12 +3,16 @@ import * as util from './util.js';
 let islandID = util.getUrlParam('id');
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
+const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('div').text('按 F12 打开控制台，输入命令 danger_delete_island() 可删除小岛，不可恢复。'));
 const Title = cc('div', { classes: 'display-6' });
 const TitleArea = cc('div', {
     classes: 'd-flex justify-content-between align-items-center my-5',
     children: [
         m(Title).text('建岛'),
-        m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-outline-dark').append(m('i').addClass('bi bi-gear')),
+        m('div').append([
+            infoBtn.addClass('onLoggedIn OldIsland').hide(),
+            m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-outline-dark ms-1').append(m('i').addClass('bi bi-gear')),
+        ]),
     ]
 });
 const NameInput = cc('input');
@@ -89,6 +93,7 @@ const SubmitBtnArea = cc('div', { children: [
     ] });
 $('#root').append([
     m(TitleArea),
+    infoMsg.hide(),
     m(Loading).hide(),
     m(Form).addClass('onLoggedIn').hide(),
     m(Alerts).addClass('my-3'),
@@ -107,7 +112,11 @@ async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
     if (!isLoggedIn)
         return;
-    if (islandID) {
+    if (!islandID) {
+        $('.NewIsland').show();
+        $('.OldIsland').hide();
+    }
+    else {
         Loading.show();
         const body = util.newFormData('id', islandID);
         util.ajax({ method: 'POST', url: '/admin/get-island', alerts: Alerts, body: body }, (resp) => {

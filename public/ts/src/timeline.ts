@@ -1,4 +1,4 @@
-import { mjComponent, m, cc, span, appendToList } from './mj.js';
+import { mjComponent, m, cc, span } from './mj.js';
 import * as util from './util.js';
 
 const allIslands = new Map<string, util.Island>();
@@ -13,11 +13,17 @@ interface Titles {
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 
+const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('ul').append([
+  m('li').text('按 F12 打开控制台，输入命令 update_title("新的大标题") 可更改大标题。'),
+  m('li').text('输入命令 update_subtitle("新的副标题") 可更改副标题。'),
+]));
+
 const Title = cc('span');
 const Subtitle = cc('h4', {classes: 'mt-3'});
 const titleArea = m('div').addClass('my-5 text-center').append([
   m('div').addClass('display-4').append([
     m(Title).text('Timeline'),
+    infoBtn.addClass('onLoggedIn ms-1 btn-sm').hide(),
     m('a').attr({href:'/public/dashboard.html',title:'dashboard'}).addClass('btn btn-sm btn-outline-dark ms-1').append(
       m('i').addClass('bi bi-gear')
     ),  
@@ -34,6 +40,7 @@ const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
 
 $('#root').append([
   titleArea,
+  infoMsg.hide(),
   m(MsgList),
   m(Alerts).addClass('my-5'),
   m(Loading).addClass('my-5').hide(),
@@ -42,13 +49,14 @@ $('#root').append([
 
 init();
 
-function init() {
+async function init() {
+  await util.checkLogin();
   initTitle();
   getPublicMessages();
 }
 
 function initTitle(): void {
-  util.ajax({method:'GET',url:'/admin/get-titles',alerts:Alerts},
+  util.ajax({method:'GET',url:'/api/get-titles',alerts:Alerts},
     (resp) => {
       const titles = resp as Titles;
       Title.elem().text(titles.Title);

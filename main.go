@@ -24,6 +24,7 @@ func main() {
 	api.GET("/logout", logoutHandler)
 	api.POST("/get-island", getPublicIsland)
 	api.POST("/more-public-messages", morePublicMessages)
+	api.GET("/get-titles", getTitles)
 
 	admin := e.Group("/admin", sleep, checkLogin)
 	admin.POST("/create-island", createIsland)
@@ -34,7 +35,6 @@ func main() {
 	admin.POST("/more-island-messages", moreIslandMessages)
 	admin.POST("/post-message", postMessage)
 	admin.POST("/delete-message", deleteMessage)
-	admin.GET("/get-titles", getTitles)
 	admin.POST("/update-title", updateTitle)
 	admin.POST("/update-subtitle", updateSubtitle)
 

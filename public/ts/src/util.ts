@@ -104,6 +104,21 @@ export function CreateLoading(): mjLoading {
   return loading;
 }
 
+export function CreateInfoPair(name: string, messages: mjElement): mjElement[] {
+  const InfoMsg = cc('div', {id:'abount'+name+'msg',classes:'card text-dark bg-light my-3',children:[
+    m('div').text(name).addClass('card-header'),
+    m('div').addClass('card-body text-secondary').append(
+      m('div').addClass('card-text').append(messages),
+    ),
+  ]});
+
+  const infoBtn = m('button').addClass('btn btn-outline-dark').attr({title:'显示/隐藏'+name}).append(
+    m('i').addClass('bi bi-info-circle'),
+  ).on('click', () => { InfoMsg.elem().toggle() });
+
+  return [infoBtn, m(InfoMsg)];
+}
+
 export interface AjaxOptions {
   method: string;
   url: string;
