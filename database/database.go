@@ -47,7 +47,10 @@ func (db *DB) Open(dbPath string) (err error) {
 		return
 	}
 	db.Path = dbPath
-	return db.Exec(stmt.CreateTables)
+	if err = db.Exec(stmt.CreateTables); err != nil {
+		return
+	}
+	return db.initMetadata()
 }
 
 func (db *DB) InsertSecretKey(key []byte) error {

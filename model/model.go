@@ -119,3 +119,8 @@ func (msg *Message) ToSimple() *SimpleMsg {
 		Body: msg.Body,
 	}
 }
+
+type Titles struct {
+	Title    string
+	Subtitle string
+}

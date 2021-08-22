@@ -34,6 +34,9 @@ func main() {
 	admin.POST("/more-island-messages", moreIslandMessages)
 	admin.POST("/post-message", postMessage)
 	admin.POST("/delete-message", deleteMessage)
+	admin.GET("/get-titles", getTitles)
+	admin.POST("/update-title", updateTitle)
+	admin.POST("/update-subtitle", updateSubtitle)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

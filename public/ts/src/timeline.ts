@@ -5,14 +5,24 @@ const allIslands = new Map<string, util.Island>();
 let lastTime = dayjs().unix();
 let firstTime = true;
 
+interface Titles {
+  Title: string;
+  Subtitle: string;
+}
+
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 
-const title = m('div').addClass('display-4 my-5 text-center').append([
-  span('Timeline'),
-  m('a').attr({href:'/public/dashboard.html',title:'dashboard'}).addClass('btn btn-sm btn-outline-dark ms-1').append(
-    m('i').addClass('bi bi-gear')
-  ),
+const Title = cc('span');
+const Subtitle = cc('h4', {classes: 'mt-3'});
+const titleArea = m('div').addClass('my-5 text-center').append([
+  m('div').addClass('display-4').append([
+    m(Title).text('Timeline'),
+    m('a').attr({href:'/public/dashboard.html',title:'dashboard'}).addClass('btn btn-sm btn-outline-dark ms-1').append(
+      m('i').addClass('bi bi-gear')
+    ),  
+  ]),
+  m(Subtitle),
 ]);
 
 const MsgList = cc('ul', {classes:'list-group list-group-flush my-5'});
@@ -23,7 +33,7 @@ const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
 ]});
 
 $('#root').append([
-  title,
+  titleArea,
   m(MsgList),
   m(Alerts).addClass('my-5'),
   m(Loading).addClass('my-5').hide(),
@@ -32,8 +42,18 @@ $('#root').append([
 
 init();
 
-async function init() {
+function init() {
+  initTitle();
   getPublicMessages();
+}
+
+function initTitle(): void {
+  util.ajax({method:'GET',url:'/admin/get-titles',alerts:Alerts},
+    (resp) => {
+      const titles = resp as Titles;
+      Title.elem().text(titles.Title);
+      Subtitle.elem().text(titles.Subtitle);
+    });
 }
 
 function getPublicMessages(): void {
@@ -46,7 +66,7 @@ function getPublicMessages(): void {
   }
   const body = util.newFormData('time', lastTime.toString());
   util.ajax({method:'POST',url:'/api/more-public-messages',alerts:Alerts,body:body},
-    (resp) => {
+    async (resp) => {
       const messages = resp as util.Message[];
       if (!messages || messages.length == 0) {
         Alerts.insert('primary', infoMsg);
@@ -56,7 +76,11 @@ function getPublicMessages(): void {
       if (messages.length < util.everyPage) {
         MoreBtnArea.elem().hide();
       }
-      appendToList(MsgList, messages.map(MsgItem));
+      for (const msg of messages) {
+        const item = MsgItem(msg);
+        MsgList.elem().append(m(item));
+        await item.init?.();
+      }
       lastTime = messages[messages.length-1].Time;
     }, undefined, () => {
       Loading.hide();
@@ -113,9 +137,9 @@ function MsgItem(msg: util.Message): mjComponent {
 }
 
 async function getIsland(id: string, alerts: util.mjAlerts) {
-  let island = allIslands.get(id);
-  if (island) return island;
   try {
+    let island = allIslands.get(id);
+    if (island) return island;
     island = await getIslandByID(id);
     allIslands.set(id, island);
     return island;
@@ -134,4 +158,26 @@ function getIslandByID(id: string): Promise<util.Island> {
         reject(errMsg);
       });
   });
+}
+
+(window as any).update_title = (title: string) => {
+  const body = util.newFormData('title', title);
+  util.ajax({method:'POST',url:'/admin/update-title',alerts:Alerts,body:body},
+    () => {
+      Title.elem().text(title);
+      const infoMsg = '标题更新成功';
+      Alerts.insert('success', infoMsg);
+      console.log(infoMsg);
+    });
+}
+
+(window as any).update_subtitle = (subtitle: string) => {
+  const body = util.newFormData('subtitle', subtitle);
+  util.ajax({method:'POST',url:'/admin/update-subtitle',alerts:Alerts,body:body},
+    () => {
+      Subtitle.elem().text(subtitle);
+      const infoMsg = '副标题更新成功';
+      Alerts.insert('success', infoMsg);
+      console.log(infoMsg);
+    });
 }
