@@ -1,4 +1,4 @@
-import { m, cc } from './mj.js';
+import { m, cc, span } from './mj.js';
 import * as util from './util.js';
 const title = m('div').text('Dashboard').addClass('display-6 my-5 text-center');
 const Alerts = util.CreateAlerts();
@@ -13,9 +13,16 @@ const LogoutBtnArea = cc('div', { classes: 'text-center my-5', children: [
     ] });
 const Index = cc('div', { children: [
         m('div').append([
-            create_item('Timeline', '/public/timeline.html', '对外公开的时间线'),
-            create_item('All Islands', '/public/islands.html', '我的全部小岛'),
+            create_item('Timeline', '/public/timeline.html', '时间线'),
+            create_item('All Islands', '/public/islands.html', '全部小岛'),
             create_item('New Island', '/public/island-info.html', '新建小岛'),
+            m('div').addClass('small text-secondary text-center my-5').append([
+                span('version 2021-08-23'),
+                m('br'),
+                m('a').text('https://github.com/ahui2016/iPelago-Server').addClass('small text-secondary')
+                    .attr({ href: 'https://github.com/ahui2016/iPelago-Server', target: '_blank' }),
+                m('i').addClass('small bi bi-box-arrow-up-right ms-1'),
+            ]),
             m(LogoutBtnArea),
         ]),
     ] });

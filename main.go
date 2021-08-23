@@ -18,7 +18,7 @@ func main() {
 
 	e.File("/", "public/timeline.html")
 
-	api := e.Group("/api", sleep)
+	api := e.Group("/api")
 	api.GET("/login-status", getLoginStatus)
 	api.POST("/login", loginHandler)
 	api.GET("/logout", logoutHandler)
@@ -26,7 +26,7 @@ func main() {
 	api.POST("/more-public-messages", morePublicMessages)
 	api.GET("/get-titles", getTitles)
 
-	admin := e.Group("/admin", sleep, checkLogin)
+	admin := e.Group("/admin", checkLogin)
 	admin.POST("/create-island", createIsland)
 	admin.POST("/get-island", getIsland)
 	admin.POST("/update-island", updateIsland)
