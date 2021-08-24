@@ -16,6 +16,7 @@ const Index = cc('div', { children: [
             create_item('Timeline', '/public/timeline.html', '时间线'),
             create_item('All Islands', '/public/islands.html', '全部小岛'),
             create_item('New Island', '/public/island-info.html', '新建小岛'),
+            create_item('Config', '/public/config.html', '全局设置'),
             m('div').addClass('small text-secondary text-center my-5').append([
                 span('version 2021-08-23'),
                 m('br'),

@@ -37,6 +37,7 @@ func main() {
 	admin.POST("/delete-message", deleteMessage)
 	admin.POST("/update-title", updateTitle)
 	admin.POST("/update-subtitle", updateSubtitle)
+	admin.POST("/update-titles", updateTitles)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

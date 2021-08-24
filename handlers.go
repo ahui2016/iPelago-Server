@@ -192,6 +192,14 @@ func updateSubtitle(c echo.Context) error {
 	return db.UpdateSubtitle(c.FormValue("subtitle"))
 }
 
+func updateTitles(c echo.Context) error {
+	title, err := getFormValue(c, "title")
+	if err != nil {
+		return err
+	}
+	return db.UpdateTitles(title, c.FormValue("subtitle"))
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {

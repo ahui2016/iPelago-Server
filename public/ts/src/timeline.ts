@@ -16,10 +16,15 @@ const Loading = util.CreateLoading();
 const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('ul').append([
   m('li').text('按 F12 打开控制台，输入命令 update_title("新的大标题") 可更改大标题。'),
   m('li').text('输入命令 update_subtitle("新的副标题") 可更改副标题。'),
+  m('li').append([
+    span('也可以进入 '),
+    m('a').text('Config页面').attr({href:'/public/config.html'}),
+    span(' 修改标题。'),
+  ]),
 ]));
 
 const Title = cc('span');
-const Subtitle = cc('h4', {classes: 'mt-3'});
+const Subtitle = cc('div', {classes: 'fs-2 text-muted mt-3'});
 const titleArea = m('div').addClass('my-5 text-center').append([
   m('div').addClass('display-4').append([
     m(Title).text('Timeline'),

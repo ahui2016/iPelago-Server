@@ -44,3 +44,15 @@ func (db *DB) UpdateTitle(title string) error {
 func (db *DB) UpdateSubtitle(subtitle string) error {
 	return db.Exec(stmt.UpdateTextValue, subtitle, subtitle_key)
 }
+
+func (db *DB) UpdateTitles(title, subtitle string) error {
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
+	_, e1 := tx.Exec(stmt.UpdateTextValue, title, title_key)
+	_, e2 := tx.Exec(stmt.UpdateTextValue, subtitle, subtitle_key)
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
