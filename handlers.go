@@ -200,6 +200,15 @@ func updateTitles(c echo.Context) error {
 	return db.UpdateTitles(title, c.FormValue("subtitle"))
 }
 
+func changePassword(c echo.Context) error {
+	oldPwd := c.FormValue("old-pwd")
+	newPwd, err := getFormValue(c, "new-pwd")
+	if err != nil {
+		return err
+	}
+	return db.ChangePassword(oldPwd, newPwd)
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {

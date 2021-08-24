@@ -17,8 +17,8 @@ $('#root').append([
   title,
   m(Loading).hide(),
   m(Alerts),
-  m(IslandList).addClass('my-5'),
-  m(util.LoginArea).addClass('onLoggedOut'),
+  m(IslandList).addClass('onLoggedIn my-5'),
+  m(util.LoginArea).addClass('onLoggedOut my-5'),
 ]);
 
 init();

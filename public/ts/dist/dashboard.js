@@ -31,7 +31,7 @@ $('#root').append([
     title,
     m(Alerts),
     m(Index).addClass('onLoggedIn').hide(),
-    m(util.LoginArea).addClass('onLoggedOut my-3'),
+    m(util.LoginArea).addClass('onLoggedOut my-5'),
 ]);
 function create_item(name, link, description) {
     return m('div').addClass('row mb-2 g-1').append([

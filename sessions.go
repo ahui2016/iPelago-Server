@@ -3,12 +3,9 @@ package main
 // https://gowebexamples.com/sessions/
 
 import (
-	"crypto/rand"
-	"database/sql"
 	"fmt"
 	"net/http"
 
-	"github.com/ahui2016/iPelago-Server/util"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
@@ -26,33 +23,6 @@ func checkIPTryCount(ip string) error {
 		return fmt.Errorf("no more try, input wrong password too many times")
 	}
 	return nil
-}
-
-func mustGenerateRandomKey32() []byte {
-	b := make([]byte, 32)
-	_, err := rand.Read(b)
-	util.Panic(err)
-	return b
-}
-
-func initSecretKey() (err error) {
-	secretKey, err = db.GetSecretKey()
-	if err == sql.ErrNoRows {
-		secretKey = mustGenerateRandomKey32()
-		err = db.InsertSecretKey(secretKey)
-	}
-	return err
-}
-
-func initPassword() error {
-	err := db.CheckPassword(defaultPassword)
-	if util.ErrorContains(err, "wrong password") {
-		return nil
-	}
-	if err == sql.ErrNoRows {
-		err = db.InsertPassword(defaultPassword)
-	}
-	return err
 }
 
 func isLoggedIn(c echo.Context) (yes bool) {

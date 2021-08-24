@@ -14,8 +14,7 @@ const (
 )
 
 const (
-	dbFileName      = "ipelago_server.db"
-	defaultPassword = "abc"
+	dbFileName = "ipelago_server.db"
 )
 
 type (
@@ -34,5 +33,9 @@ func init() {
 	flag.Parse()
 	util.Panic(db.Open(dbFileName))
 	util.Panic(initSecretKey())
-	util.Panic(initPassword())
+}
+
+func initSecretKey() (err error) {
+	secretKey, err = db.GetSecretKey()
+	return
 }

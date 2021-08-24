@@ -38,6 +38,7 @@ func main() {
 	admin.POST("/update-title", updateTitle)
 	admin.POST("/update-subtitle", updateSubtitle)
 	admin.POST("/update-titles", updateTitles)
+	admin.POST("/change-password", changePassword)
 
 	e.Logger.Fatal(e.Start(*addr))
 }

@@ -13,19 +13,19 @@ const TitleArea = cc('div', {
         m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-outline-dark').append(m('i').addClass('bi bi-gear')),
     ]
 });
-const howToPublish = m('div').append([
-    m('div').text('可任意选择以下其中一种方法发布至 iPelago 网络供他人订阅：'),
-    m('ol').append([
-        m('li').append([
-            span('把小岛地址 '), span(location.origin + jsonFile).addClass('bg-light'),
-            span(' 提交至 '), m('a').text('ipelago.org').attr({ href: 'https://ipelago.org', target: '_blank' }), span(' 即可。'),
+const HowToPublish = cc('div', { children: [
+        m('div').text('可任意选择以下其中一种方法发布至 iPelago 网络供他人订阅：'),
+        m('ol').append([
+            m('li').append([
+                span('把小岛地址 '), span(location.origin + jsonFile).addClass('bg-light'),
+                span(' 提交至 '), m('a').text('ipelago.org').attr({ href: 'https://ipelago.org', target: '_blank' }), span(' 即可。'),
+            ]),
+            m('li').append([
+                span('利用第三方免费平台，参考教程: '),
+                m('a').text('https://ipelago.org/public/how-to-publish.html').attr({ href: 'https://ipelago.org/public/how-to-publish.html', target: '_blank' }),
+            ]),
         ]),
-        m('li').append([
-            span('利用第三方免费平台，参考教程: '),
-            m('a').text('https://ipelago.org/public/how-to-publish.html').attr({ href: 'https://ipelago.org/public/how-to-publish.html', target: '_blank' }),
-        ]),
-    ]),
-]);
+    ] });
 const CopyBtn = cc('button', { id: 'copy', classes: 'btn btn-outline-primary' });
 const DownloadBtn = cc('a', { classes: 'btn btn-outline-primary ms-2' });
 const ButtonsArea = cc('div', { children: [
@@ -37,20 +37,30 @@ const ButtonsArea = cc('div', { children: [
 const Newsletter = cc('textarea', { classes: 'form-control' });
 $('#root').append([
     m(TitleArea),
-    howToPublish,
-    m(Loading),
+    m(HowToPublish).addClass('onLoggedIn'),
+    m(Loading).hide(),
     m(Alerts).addClass('my-3'),
     m(ButtonsArea).hide(),
     m(Newsletter).addClass('mt-3 mb-5').hide(),
+    m(util.LoginArea).addClass('onLoggedOut my-5'),
 ]);
 init();
-function init() {
+async function init() {
+    const isLoggedIn = await util.checkLogin(Alerts);
+    if (!isLoggedIn)
+        return;
+    Loading.show();
     util.ajax({ method: 'GET', url: jsonFile, alerts: Alerts, responseType: 'text' }, (newsletter) => {
         $(ButtonsArea.id).show();
         $(Newsletter.id).show().val(newsletter)
             .css('height', $(Newsletter.id).prop('scrollHeight'))
             .prop({ disabled: true });
-    }, undefined, () => {
+    }, errMsg => {
+        if (errMsg.toLowerCase().includes('not found')) {
+            HowToPublish.elem().hide();
+        }
+        Alerts.insert('danger', 'Not Found');
+    }, () => {
         $(Loading.id).hide();
     });
 }

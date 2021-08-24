@@ -174,7 +174,7 @@ function getIslandByID(id: string): Promise<util.Island> {
 }
 
 (window as any).update_title = (title: string) => {
-  const body = util.newFormData('title', title);
+  const body = util.newFormData('title', title.trim());
   util.ajax({method:'POST',url:'/admin/update-title',alerts:Alerts,body:body},
     () => {
       Title.elem().text(title);
@@ -185,7 +185,7 @@ function getIslandByID(id: string): Promise<util.Island> {
 }
 
 (window as any).update_subtitle = (subtitle: string) => {
-  const body = util.newFormData('subtitle', subtitle);
+  const body = util.newFormData('subtitle', subtitle.trim());
   util.ajax({method:'POST',url:'/admin/update-subtitle',alerts:Alerts,body:body},
     () => {
       Subtitle.elem().text(subtitle);

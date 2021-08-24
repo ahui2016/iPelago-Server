@@ -14,11 +14,6 @@ import (
 // 每一页有多少条消息。注意：如果修改该数值，同时需要修改 util.ts 中的 everyPage
 const EveryPage = 10 // 99
 
-const (
-	SecretKeyName = "secret-key" // for sessions
-	PasswordName  = "password"
-)
-
 type (
 	Island     = model.Island
 	Message    = model.Message
@@ -51,33 +46,6 @@ func (db *DB) Open(dbPath string) (err error) {
 		return
 	}
 	return db.initMetadata()
-}
-
-func (db *DB) InsertSecretKey(key []byte) error {
-	return db.Exec(stmt.InsertTextValue, SecretKeyName, util.Base64Encode(key))
-}
-
-func (db *DB) GetSecretKey() ([]byte, error) {
-	key64, err := getText1(db.DB, stmt.GetTextValue, SecretKeyName)
-	if err != nil {
-		return nil, err
-	}
-	return util.Base64Decode(key64)
-}
-
-func (db *DB) InsertPassword(pwd string) error {
-	return db.Exec(stmt.InsertTextValue, PasswordName, pwd)
-}
-
-func (db *DB) CheckPassword(userInputPwd string) error {
-	pwd, err := getText1(db.DB, stmt.GetTextValue, PasswordName)
-	if err != nil {
-		return err
-	}
-	if userInputPwd != pwd {
-		return fmt.Errorf("wrong password")
-	}
-	return nil
 }
 
 func (db *DB) UpdateIsland(island *Island) error {

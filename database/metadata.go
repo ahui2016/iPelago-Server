@@ -1,7 +1,9 @@
 package database
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"fmt"
 
 	"github.com/ahui2016/iPelago-Server/model"
 	"github.com/ahui2016/iPelago-Server/stmt"
@@ -9,10 +11,13 @@ import (
 )
 
 const (
+	SecretKeyName    = "secret-key"
 	title_key        = "title-key"
 	default_title    = "Timeline"
 	subtitle_key     = "subtitle-key"
 	default_subtitle = ""
+	password_key     = "password-key"
+	default_password = "abc"
 )
 
 type Titles = model.Titles
@@ -26,9 +31,32 @@ func initTextValue(tx TX, key, value string) (err error) {
 }
 
 func (db *DB) initMetadata() error {
-	e1 := initTextValue(db.DB, title_key, default_title)
-	e2 := initTextValue(db.DB, subtitle_key, default_subtitle)
-	return util.WrapErrors(e1, e2)
+	tx := db.mustBegin()
+	defer tx.Rollback()
+
+	e1 := initTextValue(tx, title_key, default_title)
+	e2 := initTextValue(tx, subtitle_key, default_subtitle)
+	e3 := initTextValue(tx, password_key, default_password)
+	e4 := initTextValue(tx, SecretKeyName, util.Base64Encode(mustGenerateRandomKey32()))
+	if err := util.WrapErrors(e1, e2, e3, e4); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+func mustGenerateRandomKey32() []byte {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	util.Panic(err)
+	return b
+}
+
+func (db *DB) GetSecretKey() ([]byte, error) {
+	key64, err := getText1(db.DB, stmt.GetTextValue, SecretKeyName)
+	if err != nil {
+		return nil, err
+	}
+	return util.Base64Decode(key64)
 }
 
 func (db *DB) GetTitles() (Titles, error) {
@@ -55,4 +83,26 @@ func (db *DB) UpdateTitles(title, subtitle string) error {
 		return err
 	}
 	return tx.Commit()
+}
+
+func (db *DB) ChangePassword(oldPwd, newPwd string) error {
+	if err := db.CheckPassword(oldPwd); err != nil {
+		if util.ErrorContains(err, "wrong password") {
+			return fmt.Errorf("旧密码错误")
+		} else {
+			return err
+		}
+	}
+	return db.Exec(stmt.UpdateTextValue, newPwd, password_key)
+}
+
+func (db *DB) CheckPassword(userInputPwd string) error {
+	pwd, err := getText1(db.DB, stmt.GetTextValue, password_key)
+	if err != nil {
+		return err
+	}
+	if userInputPwd != pwd {
+		return fmt.Errorf("wrong password")
+	}
+	return nil
 }

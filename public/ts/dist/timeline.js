@@ -15,7 +15,7 @@ const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('ul').append([
     ]),
 ]));
 const Title = cc('span');
-const Subtitle = cc('div', { classes: 'fs-4 text-muted mt-3' });
+const Subtitle = cc('div', { classes: 'fs-2 text-muted mt-3' });
 const titleArea = m('div').addClass('my-5 text-center').append([
     m('div').addClass('display-4').append([
         m(Title).text('Timeline'),
@@ -147,7 +147,7 @@ function getIslandByID(id) {
     });
 }
 window.update_title = (title) => {
-    const body = util.newFormData('title', title);
+    const body = util.newFormData('title', title.trim());
     util.ajax({ method: 'POST', url: '/admin/update-title', alerts: Alerts, body: body }, () => {
         Title.elem().text(title);
         const infoMsg = '标题更新成功';
@@ -156,7 +156,7 @@ window.update_title = (title) => {
     });
 };
 window.update_subtitle = (subtitle) => {
-    const body = util.newFormData('subtitle', subtitle);
+    const body = util.newFormData('subtitle', subtitle.trim());
     util.ajax({ method: 'POST', url: '/admin/update-subtitle', alerts: Alerts, body: body }, () => {
         Subtitle.elem().text(subtitle);
         const infoMsg = '副标题更新成功';
