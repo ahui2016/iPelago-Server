@@ -7,7 +7,7 @@ const LogoutBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(LogoutBtn).text('Logout').on('click', event => {
             event.preventDefault();
             util.ajax({ method: 'GET', url: '/api/logout', alerts: Alerts, buttonID: LogoutBtn.id }, () => {
-                location.href = '/public/login.html';
+                location.href = '/';
             });
         }),
     ] });

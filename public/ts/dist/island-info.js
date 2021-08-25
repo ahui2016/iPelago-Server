@@ -60,7 +60,7 @@ const SubmitBtnArea = cc('div', { children: [
                     Alerts.insert('success', '建岛成功');
                     $('.NewIsland').hide();
                     $('.OldIsland').show();
-                    if (body.get('hide') == 'public') {
+                    if (body.hide == 'public') {
                         NewsletterBtn.elem().show();
                     }
                 });
@@ -73,7 +73,7 @@ const SubmitBtnArea = cc('div', { children: [
             try {
                 const body = await newIslandForm();
                 util.ajax({ method: 'POST', url: '/admin/update-island', alerts: Alerts, buttonID: UpdateBtn.id, body: body }, () => {
-                    if (body.get('hide') == 'public') {
+                    if (body.hide == 'public') {
                         NewsletterBtn.elem().show();
                     }
                     else {
@@ -160,15 +160,15 @@ async function newIslandForm() {
         }
         throw errMsg;
     }
-    const body = new FormData();
-    body.set('id', islandID);
-    body.set('name', util.val(NameInput).trim());
-    body.set('email', util.val(EmailInput).trim());
-    body.set('avatar', avatarAddr);
-    body.set('link', util.val(LinkInput).trim());
-    body.set('note', util.val(NoteInput).trim());
-    body.set('hide', $('input[name="island-hide"]:checked').val());
-    return body;
+    return {
+        id: islandID,
+        name: util.val(NameInput).trim(),
+        email: util.val(EmailInput).trim(),
+        avatar: avatarAddr,
+        link: util.val(LinkInput).trim(),
+        note: util.val(NoteInput).trim(),
+        hide: $('input[name="island-hide"]:checked').val()
+    };
 }
 async function checkAvatarSize(avatarAddr) {
     const avatar = await util.ajaxPromise({

@@ -29,6 +29,11 @@ const MoreBtn = cc('button', { classes: 'btn btn-outline-secondary' });
 const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(MoreBtn).text('More').on('click', getPublicMessages),
     ] });
+const bottomLine = m('div').addClass('text-center fw-light small text-secondary mb-3').append([
+    m('a').text('https://github.com/ahui2016/iPelago-Server').addClass('link-secondary')
+        .attr({ href: 'https://github.com/ahui2016/iPelago-Server', target: '_blank' }),
+    m('i').addClass('bi bi-box-arrow-up-right ms-1'),
+]);
 $('#root').append([
     titleArea,
     infoMsg.hide(),
@@ -36,6 +41,7 @@ $('#root').append([
     m(Alerts).addClass('my-5'),
     m(Loading).addClass('my-5').hide(),
     m(MoreBtnArea),
+    bottomLine,
 ]);
 init();
 async function init() {
@@ -74,7 +80,7 @@ function getPublicMessages() {
         for (const msg of messages) {
             const item = MsgItem(msg);
             MsgList.elem().append(m(item));
-            await ((_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item));
+            await ((_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item)); // 这个 await 是必须的
         }
         lastTime = messages[messages.length - 1].Time;
     }, undefined, () => {
@@ -116,7 +122,8 @@ function MsgItem(msg) {
         else if (httpLink.index) {
             contentsElem.append([
                 span(msg.Body.substring(0, httpLink.index)),
-                m('a').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
+                m('a').addClass('link-dark').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
+                m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
                 span(msg.Body.substring(httpLink.index + httpLink[0].length)),
             ]);
         }

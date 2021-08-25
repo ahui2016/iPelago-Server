@@ -11,7 +11,7 @@ const LogoutBtnArea = cc('div', {classes: 'text-center my-5', children: [
     event.preventDefault();
     util.ajax({method:'GET',url:'/api/logout',alerts:Alerts,buttonID:LogoutBtn.id},
       () => {
-        location.href = '/public/login.html';
+        location.href = '/';
       });
   }),
 ]});

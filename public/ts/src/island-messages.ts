@@ -203,7 +203,8 @@ function MsgItem(msg: util.Message): mjComponent {
     } else if (httpLink.index) {
       contentsElem.append([
         span(msg.Body.substring(0, httpLink.index)),
-        m('a').text(httpLink[0]).attr({href:httpLink[0],target:'_blank'}),
+        m('a').addClass('link-dark').text(httpLink[0]).attr({href:httpLink[0],target:'_blank'}),
+        m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
         span(msg.Body.substring(httpLink.index + httpLink[0].length)),
       ]);
     }

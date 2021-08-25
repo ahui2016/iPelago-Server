@@ -68,9 +68,11 @@ const MsgPostArea = cc('div', { children: [
                 MsgInput.elem().trigger('focus');
                 return;
             }
-            const body = util.newFormData('msg-body', msgBody);
-            body.set('island-id', islandID);
-            body.set('hide', islandHide);
+            const body = {
+                'msg-body': msgBody,
+                'island-id': islandID,
+                'hide': islandHide
+            };
             util.ajax({ method: 'POST', url: '/admin/post-message', alerts: Alerts, buttonID: PostBtn.id, body: body }, (resp) => {
                 var _a;
                 const msg = resp;
@@ -119,8 +121,10 @@ async function init() {
 }
 function getMessages() {
     Loading.show();
-    const body = util.newFormData('id', islandID);
-    body.set('time', lastTime.toString());
+    const body = {
+        id: islandID,
+        time: lastTime.toString()
+    };
     util.ajax({ method: 'POST', url: '/admin/more-island-messages', alerts: Alerts, body: body }, (resp) => {
         const messages = resp;
         if (!messages || messages.length == 0) {
@@ -152,8 +156,10 @@ function MsgItem(msg) {
     self.init = () => {
         const selfElem = self.elem();
         selfElem.find('.DeleteBtn').on('click', () => {
-            const body = util.newFormData('message-id', msg.ID);
-            body.set('island-id', msg.IslandID);
+            const body = {
+                'message-id': msg.ID,
+                'island-id': msg.IslandID
+            };
             util.ajax({ method: 'POST', url: '/admin/delete-message', alerts: MsgAlerts, buttonID: `${self.id} .DeleteBtn`, body: body }, () => {
                 selfElem.find('.Contents').removeClass('fs-5').addClass('text-muted');
                 selfElem.find('.Deleted').toggle();
@@ -168,7 +174,8 @@ function MsgItem(msg) {
         else if (httpLink.index) {
             contentsElem.append([
                 span(msg.Body.substring(0, httpLink.index)),
-                m('a').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
+                m('a').addClass('link-dark').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
+                m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
                 span(msg.Body.substring(httpLink.index + httpLink[0].length)),
             ]);
         }
