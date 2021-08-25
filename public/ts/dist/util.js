@@ -121,7 +121,16 @@ export function ajax(options, onSuccess, onFail, onAlways) {
         if (onAlways)
             onAlways(this);
     };
-    xhr.send(options.body);
+    if (options.body && !(options.body instanceof FormData)) {
+        const body = new FormData();
+        for (const [k, v] of Object.entries(options.body)) {
+            body.set(k, v);
+        }
+        xhr.send(body);
+    }
+    else {
+        xhr.send(options.body);
+    }
 }
 /**
  * @param n 超时限制，单位是秒

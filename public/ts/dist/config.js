@@ -20,8 +20,10 @@ const ConfigTitles = cc('div', { children: [
         m(TitlesAlerts).addClass('my-2'),
         m('div').addClass('text-center mt-4 mb-5').append([
             m(UpdateTitlesBtn).text('Update Titles').on('click', () => {
-                const body = util.newFormData('title', util.val(TitleInput).trim());
-                body.set('subtitle', util.val(SubtitleInput).trim());
+                const body = {
+                    title: util.val(TitleInput).trim(),
+                    subtitle: util.val(SubtitleInput).trim()
+                };
                 util.ajax({ method: 'POST', url: '/admin/update-titles', alerts: TitlesAlerts, buttonID: UpdateTitlesBtn.id, body: body }, () => {
                     TitlesAlerts.clear().insert('success', '标题更新成功');
                 });

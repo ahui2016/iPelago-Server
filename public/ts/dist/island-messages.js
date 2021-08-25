@@ -146,7 +146,7 @@ function MsgItem(msg) {
                 span('DELETED').addClass('Deleted badge bg-secondary ms-1').hide(),
                 m('i').addClass('CursorPointer DeleteBtn bi bi-trash ms-1').attr({ title: 'delete' }),
             ]),
-            m('span').addClass('Contents fs-5').text(msg.Body),
+            m('span').addClass('Contents fs-5'),
             m(MsgAlerts),
         ] });
     self.init = () => {
@@ -160,6 +160,18 @@ function MsgItem(msg) {
                 selfElem.find('.DeleteBtn').toggle();
             });
         });
+        const contentsElem = $(self.id).find('.Contents');
+        const httpLink = msg.Body.match(util.httpRegex);
+        if (!httpLink) {
+            contentsElem.text(msg.Body);
+        }
+        else if (httpLink.index) {
+            contentsElem.append([
+                span(msg.Body.substring(0, httpLink.index)),
+                m('a').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
+                span(msg.Body.substring(httpLink.index + httpLink[0].length)),
+            ]);
+        }
     };
     return self;
 }

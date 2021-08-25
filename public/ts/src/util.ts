@@ -122,7 +122,7 @@ export function CreateInfoPair(name: string, messages: mjElement): mjElement[] {
 export interface AjaxOptions {
   method: string;
   url: string;
-  body?: FormData;
+  body?: FormData | object;
   alerts?: mjAlerts;
   buttonID?: string;
   responseType?: XMLHttpRequestResponseType;
@@ -187,7 +187,15 @@ export function ajax(
     if (onAlways) onAlways(this);
   };
 
-  xhr.send(options.body);
+  if (options.body && !(options.body instanceof FormData)) {
+    const body = new FormData();
+    for (const [k, v] of Object.entries(options.body)) {
+      body.set(k, v);
+    }
+    xhr.send(body);
+  } else {
+    xhr.send(options.body);
+  }
 }
 
 /**

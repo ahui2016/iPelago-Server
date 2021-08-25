@@ -85,9 +85,11 @@ const MsgPostArea = cc('div', {children:[
         MsgInput.elem().trigger('focus');
         return;        
       }
-      const body = util.newFormData('msg-body', msgBody);
-      body.set('island-id', islandID);
-      body.set('hide', islandHide);
+      const body = {
+        'msg-body': msgBody,
+        'island-id': islandID,
+        'hide': islandHide
+      }
       util.ajax({method:'POST',url:'/admin/post-message',alerts:Alerts,buttonID:PostBtn.id,body:body},
         (resp) => {
           const msg = resp as util.Message;
@@ -144,8 +146,10 @@ async function init() {
 
 function getMessages(): void {
   Loading.show();
-  const body = util.newFormData('id', islandID);
-  body.set('time', lastTime.toString());
+  const body = {
+    id: islandID,
+    time: lastTime.toString()
+  }
   util.ajax({method:'POST',url:'/admin/more-island-messages',alerts:Alerts,body:body},
     (resp) => {
       const messages = resp as util.Message[];
@@ -173,15 +177,17 @@ function MsgItem(msg: util.Message): mjComponent {
       span('DELETED').addClass('Deleted badge bg-secondary ms-1').hide(),
       m('i').addClass('CursorPointer DeleteBtn bi bi-trash ms-1').attr({title:'delete'}),
     ]),
-    m('span').addClass('Contents fs-5').text(msg.Body),
+    m('span').addClass('Contents fs-5'),
     m(MsgAlerts),
   ]});
 
   self.init = () => {    
     const selfElem = self.elem();
     selfElem.find('.DeleteBtn').on('click', () => {  
-      const body = util.newFormData('message-id', msg.ID);
-      body.set('island-id', msg.IslandID);
+      const body = {
+        'message-id': msg.ID,
+        'island-id': msg.IslandID
+      }
       util.ajax({method:'POST',url:'/admin/delete-message',alerts:MsgAlerts,buttonID:`${self.id} .DeleteBtn`,body:body},
         () => {
           selfElem.find('.Contents').removeClass('fs-5').addClass('text-muted');
@@ -189,6 +195,18 @@ function MsgItem(msg: util.Message): mjComponent {
           selfElem.find('.DeleteBtn').toggle();
         });
     });
+
+    const contentsElem = $(self.id).find('.Contents');
+    const httpLink = msg.Body.match(util.httpRegex);
+    if (!httpLink) {
+      contentsElem.text(msg.Body);
+    } else if (httpLink.index) {
+      contentsElem.append([
+        span(msg.Body.substring(0, httpLink.index)),
+        m('a').text(httpLink[0]).attr({href:httpLink[0],target:'_blank'}),
+        span(msg.Body.substring(httpLink.index + httpLink[0].length)),
+      ]);
+    }
   };
 
   return self;

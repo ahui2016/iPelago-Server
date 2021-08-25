@@ -30,8 +30,10 @@ const ConfigTitles = cc('div', {children:[
   m(TitlesAlerts).addClass('my-2'),
   m('div').addClass('text-center mt-4 mb-5').append([
     m(UpdateTitlesBtn).text('Update Titles').on('click', () => {
-      const body = util.newFormData('title', util.val(TitleInput).trim());
-      body.set('subtitle', util.val(SubtitleInput).trim());
+      const body = {
+        title: util.val(TitleInput).trim(),
+        subtitle: util.val(SubtitleInput).trim()
+      };
       util.ajax({method:'POST',url:'/admin/update-titles',alerts:TitlesAlerts,buttonID:UpdateTitlesBtn.id,body:body},
         () => {
           TitlesAlerts.clear().insert('success', '标题更新成功');
@@ -52,8 +54,10 @@ const ConfigPassword = cc('div', {children:[
   m(PasswordAlerts).addClass('my-2'),
   m('div').addClass('text-center mt-4 mb-5').append([
     m(ChangePwdBtn).text('Change Password').on('click', () => {
-      const body = util.newFormData('old-pwd', util.val(OldPassword));
-      body.set('new-pwd', util.val(NewPassword));
+      const body = {
+        'old-pwd': util.val(OldPassword),
+        'new-pwd': util.val(NewPassword)
+      };
       util.ajax({method:'POST',url:'/admin/change-password',alerts:PasswordAlerts,buttonID:ChangePwdBtn.id,body:body},
         () => {
           PasswordAlerts.clear().insert('success', '更改密码成功');
