@@ -1,4 +1,4 @@
-import { mjComponent, m, cc, span } from './mj.js';
+import { mjComponent, m, cc, span, appendToListAsync } from './mj.js';
 import * as util from './util.js';
 
 const allIslands = new Map<string, util.Island>();
@@ -96,11 +96,7 @@ function getPublicMessages(): void {
       if (messages.length < util.everyPage) {
         MoreBtnArea.elem().hide();
       }
-      for (const msg of messages) {
-        const item = MsgItem(msg);
-        MsgList.elem().append(m(item));
-        await item.init?.(); // 这个 await 是必须的
-      }
+      await appendToListAsync(MsgList, messages.map(MsgItem));
       lastTime = messages[messages.length-1].Time;
     }, undefined, () => {
       Loading.hide();

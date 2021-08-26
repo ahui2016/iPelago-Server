@@ -1,4 +1,4 @@
-import { m, cc, span } from './mj.js';
+import { m, cc, span, appendToListAsync } from './mj.js';
 import * as util from './util.js';
 const allIslands = new Map();
 let lastTime = dayjs().unix();
@@ -67,7 +67,6 @@ function getPublicMessages() {
     }
     const body = util.newFormData('time', lastTime.toString());
     util.ajax({ method: 'POST', url: '/api/more-public-messages', alerts: Alerts, body: body }, async (resp) => {
-        var _a;
         const messages = resp;
         if (!messages || messages.length == 0) {
             Alerts.insert('primary', infoMsg);
@@ -77,11 +76,12 @@ function getPublicMessages() {
         if (messages.length < util.everyPage) {
             MoreBtnArea.elem().hide();
         }
-        for (const msg of messages) {
-            const item = MsgItem(msg);
-            MsgList.elem().append(m(item));
-            await ((_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item)); // 这个 await 是必须的
-        }
+        // for (const msg of messages) {
+        //   const item = MsgItem(msg);
+        //   MsgList.elem().append(m(item));
+        //   await item.init?.(); // 这个 await 是必须的
+        // }
+        await appendToListAsync(MsgList, messages.map(MsgItem));
         lastTime = messages[messages.length - 1].Time;
     }, undefined, () => {
         Loading.hide();

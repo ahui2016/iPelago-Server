@@ -66,3 +66,10 @@ export function appendToList(list: mjComponent, items: mjComponent[]): void {
     item.init?.();
   });
 }
+
+export async function appendToListAsync(list: mjComponent, items: mjComponent[]) {
+  for (const item of items) {
+    list.elem().append(m(item));
+    await item.init?.();
+  }
+}

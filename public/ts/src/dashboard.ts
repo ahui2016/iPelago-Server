@@ -22,6 +22,7 @@ const Index = cc('div', {children: [
     create_item('All Islands', '/public/islands.html', '全部小岛'),
     create_item('New Island', '/public/island-info.html', '新建小岛'),
     create_item('Config', '/public/config.html', '全局设置'),
+    m(LogoutBtnArea),
     m('div').addClass('small text-secondary text-center my-5').append([
       span('version 2021-08-23'),
       m('br'),
@@ -29,7 +30,6 @@ const Index = cc('div', {children: [
         .attr({href:'https://github.com/ahui2016/iPelago-Server',target:'_blank'}),
       m('i').addClass('small bi bi-box-arrow-up-right ms-1'),
     ]),  
-    m(LogoutBtnArea),
   ]),
 ]});
 

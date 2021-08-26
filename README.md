@@ -1,5 +1,41 @@
-# iPelago-Server
+# iPelago Server
 
-一个用 Go 语言写的，简单的
+一个用 Go 语言写的，代码简单、前端页面也简单、功能也简单的短消息发布方案（类似早期的 twitter/饭否/微博）。
 
-服务器版的 iPelago 建岛工具
+## 功能/特色
+
+- 可创建和管理多个频道（在本软件中，一个频道称为一个 "小岛"）。
+- 每个频道可单独设置为公开或隐私，隐私小岛必须用管理员密码登入后才能访问。
+
+## 安装运行
+
+- 使用本软件需要拥有服务器（比如 VPS），需要建站的基础知识。
+- 先正确安装 git 和 Go 语言。
+
+```
+$ cd ~
+$ git clone https://github.com/ahui2016/iPelago-Server.git
+$ cd iPelago-Server
+$ go build
+$ ./iPelago-Server
+```
+
+可使用参数 `-addr` 更改端口，比如:
+
+```
+$ ./iPelago-Server -addr 0.0.0.0:955
+```
+
+成功建站后，需要用管理员密码（初始密码是 abc）登入才能新建频道（小岛）和发布消息，可在 Config 页面更改密码。
+
+### 前端采用 TypeScript 和 mj.js
+
+- mj.js 是一个受 Mithril.js 启发的基于 jQuery 实现的极简框架，对于曾经用过 jQuery 的人来说，学习成本接近零。详见 https://github.com/ahui2016/mj.js
+
+- 如果需要修改本软件的前端代码，请直接修改 public/ts/src 文件夹内的 ts 文件，修改后在 public/ts/src 文件夹内执行 tsc 命令即可。
+
+## iPelago beta 本地版
+
+- 本软件(github.com/ahui2016/iPelago-Server) 可单独使用，也可当作 [iPelago](https://ipelago.org) 的工具来使用，成功搭建网站后可非常方便地发布消息（不需要利用第三方平台），但没有订阅小岛的功能。
+
+- 另外还有一个 iPelago beta 本地版(github.com/ahui2016/ipelago), 可创建小岛（单账号）、批量订阅小岛，但对外发布消息时需要利用第三方平台。
