@@ -85,14 +85,7 @@ func (db *DB) UpdateTitles(title, subtitle string) error {
 	return tx.Commit()
 }
 
-func (db *DB) ChangePassword(oldPwd, newPwd string) error {
-	if err := db.CheckPassword(oldPwd); err != nil {
-		if util.ErrorContains(err, "wrong password") {
-			return fmt.Errorf("旧密码错误")
-		} else {
-			return err
-		}
-	}
+func (db *DB) ChangePassword(newPwd string) error {
 	return db.Exec(stmt.UpdateTextValue, newPwd, password_key)
 }
 

@@ -33,6 +33,7 @@ const LoginForm = cc('form', {children: [
       const pwd = PwdInput.elem().val() as string;
       if (!pwd) {
         Alerts.insert('info', '请输入密码');
+        PwdInput.elem().trigger('focus');
         return;
       }
       const body = util.newFormData('password', pwd);
@@ -43,7 +44,7 @@ const LoginForm = cc('form', {children: [
           Alerts.clear().insert('success', '成功登入');
           // setTimeout(() => { location.href = '/public/home.html' }, 2000);
         }, undefined, () => {
-          PwdInput.elem().val('');
+          PwdInput.elem().val('').trigger('focus');
         });
     }),
   ]),

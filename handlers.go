@@ -201,12 +201,29 @@ func updateTitles(c echo.Context) error {
 }
 
 func changePassword(c echo.Context) error {
+	if *demo {
+		return fmt.Errorf("你正在使用演示版，因此不可更改密码。")
+	}
 	oldPwd := c.FormValue("old-pwd")
 	newPwd, err := getFormValue(c, "new-pwd")
 	if err != nil {
 		return err
 	}
-	return db.ChangePassword(oldPwd, newPwd)
+
+	ip := c.RealIP()
+	if err := checkIPTryCount(ip); err != nil {
+		return err
+	}
+	if err := db.CheckPassword(oldPwd); err != nil {
+		if util.ErrorContains(err, "wrong password") {
+			ipTryCount[ip]++
+			return fmt.Errorf("旧密码错误")
+		}
+		return err
+	}
+	ipTryCount[ip] = 0
+
+	return db.ChangePassword(newPwd)
 }
 
 // getFormValue gets the c.FormValue(key), trims its spaces,
