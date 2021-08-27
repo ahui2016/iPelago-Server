@@ -36,7 +36,7 @@ const titleArea = m('div').addClass('my-5 text-center').append([
   m(Subtitle),
 ]);
 
-const MsgList = cc('ul', {classes:'list-group list-group-flush my-5'});
+const MsgList = cc('div', {classes:'my-5 vstack gap-5'});
 
 const MoreBtn = cc('button', {classes:'btn btn-outline-secondary'});
 const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
@@ -106,12 +106,11 @@ function getPublicMessages(): void {
 function MsgItem(msg: util.Message): mjComponent {
   const MsgAlerts = util.CreateAlerts();
   const datetime = dayjs.unix(msg.Time).format('YYYY-MM-DD HH:mm:ss');
-  const self = cc('div', {id:util.itemID(msg.ID), classes:'list-group-item d-flex justify-content-start align-items-start MsgItem mb-3', children:[
+  const self = cc('div', {id:util.itemID(msg.ID), classes:'d-flex justify-content-start align-items-start MsgItem', children:[
     m('a').addClass('AvatarLink').append( m('img').addClass('Avatar') ),
     m('div').addClass('ms-3 flex-fill').append([
       m('div').addClass('Name'),
-      m('div').addClass('Contents fs-5'),
-      m('div').addClass('Datetime small text-muted text-end').text(datetime),
+      m('div').addClass('Contents fs-5').attr({title:datetime}),
       m(MsgAlerts),
     ]),
   ]});

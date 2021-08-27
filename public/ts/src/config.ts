@@ -58,6 +58,16 @@ const ConfigPassword = cc('div', {children:[
         'old-pwd': util.val(OldPassword),
         'new-pwd': util.val(NewPassword)
       };
+      if (!body['old-pwd']) {
+        PasswordAlerts.insert('danger', '请输入旧密码');
+        OldPassword.elem().trigger('focus');
+        return;
+      }
+      if (!body['new-pwd']) {
+        PasswordAlerts.insert('danger', '请输入新密码');
+        NewPassword.elem().trigger('focus');
+        return;
+      }
       util.ajax({method:'POST',url:'/admin/change-password',alerts:PasswordAlerts,buttonID:ChangePwdBtn.id,body:body},
         () => {
           PasswordAlerts.clear().insert('success', '更改密码成功');

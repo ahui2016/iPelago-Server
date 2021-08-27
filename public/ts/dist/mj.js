@@ -50,6 +50,6 @@ export async function appendToListAsync(list, items) {
     var _a;
     for (const item of items) {
         list.elem().append(m(item));
-        await ((_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item)); // 这个 await 是必须的
+        await ((_a = item.init) === null || _a === void 0 ? void 0 : _a.call(item));
     }
 }
