@@ -46,18 +46,19 @@ const Newsletter = cc('textarea', {classes:'form-control'});
 
 $('#root').append([
   m(TitleArea),
-  m(HowToPublish).addClass('onLoggedIn'),
-  m(Loading).hide(),
+  m(HowToPublish).addClass('onLoggedIn').hide(),
+  m(Loading),
   m(Alerts).addClass('my-3'),
   m(ButtonsArea).hide(),
   m(Newsletter).addClass('mt-3 mb-5').hide(),
-  m(util.LoginArea).addClass('onLoggedOut my-5'),
+  m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 
 init();
 
 async function init() {
   const isLoggedIn = await util.checkLogin(Alerts);
+  Loading.hide();
   if (!isLoggedIn) return;
 
   Loading.show();

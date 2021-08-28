@@ -2,6 +2,7 @@ import { m, cc, span } from './mj.js';
 import * as util from './util.js';
 const title = m('div').text('Dashboard').addClass('display-6 my-5 text-center');
 const Alerts = util.CreateAlerts();
+const Loading = util.CreateLoading();
 const LogoutBtn = cc('button', { classes: 'btn btn-sm btn-outline-secondary' });
 const LogoutBtnArea = cc('div', { classes: 'text-center my-5', children: [
         m(LogoutBtn).text('Logout').on('click', event => {
@@ -29,9 +30,10 @@ const Index = cc('div', { children: [
     ] });
 $('#root').append([
     title,
+    m(Loading),
     m(Alerts),
     m(Index).addClass('onLoggedIn').hide(),
-    m(util.LoginArea).addClass('onLoggedOut my-5'),
+    m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 function create_item(name, link, description) {
     return m('div').addClass('row mb-2 g-1').append([
@@ -42,6 +44,7 @@ function create_item(name, link, description) {
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
+    Loading.hide();
     if (!isLoggedIn)
         return;
 }

@@ -64,15 +64,16 @@ const ConfigPassword = cc('div', { children: [
     ] });
 $('#root').append([
     titleArea,
-    m(Loading).addClass('my-5').hide(),
+    m(Loading).addClass('my-5'),
     m(Alerts),
-    m(ConfigTitles).addClass('onLoggedIn'),
-    m(ConfigPassword).addClass('onLoggedIn'),
-    m(util.LoginArea).addClass('onLoggedOut my-5'),
+    m(ConfigTitles).addClass('onLoggedIn').hide(),
+    m(ConfigPassword).addClass('onLoggedIn').hide(),
+    m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
+    Loading.hide();
     if (!isLoggedIn)
         return;
     Loading.show();

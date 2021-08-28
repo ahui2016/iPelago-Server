@@ -9,14 +9,15 @@ const Loading = util.CreateLoading();
 const IslandList = cc('div', { classes: 'vstack gap-3' });
 $('#root').append([
     title,
-    m(Loading).hide(),
+    m(Loading),
     m(Alerts),
     m(IslandList).addClass('onLoggedIn my-5'),
-    m(util.LoginArea).addClass('onLoggedOut my-5'),
+    m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
+    Loading.hide();
     if (!isLoggedIn)
         return;
     Loading.show();

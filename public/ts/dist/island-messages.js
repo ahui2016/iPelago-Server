@@ -96,13 +96,14 @@ $('#root').append([
     m(Alerts),
     m(MsgList),
     m(MoreBtnAlerts).addClass('my-5'),
-    m(Loading).addClass('my-5').hide(),
+    m(Loading).addClass('my-5'),
     m(MoreBtnArea).hide(),
-    m(util.LoginArea).addClass('onLoggedOut my-5'),
+    m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 init();
 async function init() {
     const isLoggedIn = await util.checkLogin(Alerts);
+    Loading.hide();
     if (!isLoggedIn)
         return;
     if (islandID) {

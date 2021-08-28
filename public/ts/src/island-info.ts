@@ -110,10 +110,10 @@ const SubmitBtnArea = cc('div', {children:[
 $('#root').append([
   m(TitleArea),
   infoMsg.hide(),
-  m(Loading).hide(),
+  m(Loading),
   m(Form).addClass('onLoggedIn').hide(),
   m(Alerts).addClass('my-3'),
-  m(util.LoginArea).addClass('onLoggedOut my-5'),
+  m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
   m(SubmitBtnArea).addClass('onLoggedIn mb-5 text-end').hide(),
 ]);
 
@@ -129,6 +129,7 @@ init();
 
 async function init() {
   const isLoggedIn = await util.checkLogin(Alerts);
+  Loading.hide();
   if (!isLoggedIn) return;
 
   if (!islandID) {

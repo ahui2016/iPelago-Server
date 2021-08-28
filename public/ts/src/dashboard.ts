@@ -4,6 +4,7 @@ import * as util from './util.js';
 const title = m('div').text('Dashboard').addClass('display-6 my-5 text-center');
 
 const Alerts = util.CreateAlerts();
+const Loading = util.CreateLoading();
 
 const LogoutBtn = cc('button', {classes: 'btn btn-sm btn-outline-secondary'});
 const LogoutBtnArea = cc('div', {classes: 'text-center my-5', children: [
@@ -35,9 +36,10 @@ const Index = cc('div', {children: [
 
 $('#root').append([
   title,
+  m(Loading),
   m(Alerts),
   m(Index).addClass('onLoggedIn').hide(),
-  m(util.LoginArea).addClass('onLoggedOut my-5'),
+  m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 
 function create_item(name: string, link: string, description: string): mjElement {
@@ -53,5 +55,6 @@ init();
 
 async function init() {
   const isLoggedIn = await util.checkLogin(Alerts);
+  Loading.hide();
   if (!isLoggedIn) return;
 }
