@@ -7,10 +7,14 @@ const title = m('div').addClass('display-4 my-5 text-center').append([
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 const IslandList = cc('div', { classes: 'vstack gap-3' });
+const CreateBtn = cc('div', { classes: 'text-center my-5', children: [
+        m('a').text('Create Island').attr({ href: '/public/island-info.html' }),
+    ] });
 $('#root').append([
     title,
     m(Loading),
     m(Alerts),
+    m(CreateBtn).hide(),
     m(IslandList).addClass('onLoggedIn my-5'),
     m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
@@ -24,7 +28,8 @@ async function init() {
     util.ajax({ method: 'GET', url: '/admin/all-islands', alerts: Alerts }, (resp) => {
         const islands = resp;
         if (!islands || islands.length == 0) {
-            Alerts.insert('info', '尚未订阅任何岛');
+            Alerts.insert('info', '尚未创建小岛');
+            CreateBtn.elem().show();
             return;
         }
         appendToList(IslandList, islands.map(IslandItem));
