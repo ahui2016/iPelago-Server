@@ -43,11 +43,11 @@ const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
   m(MoreBtn).text('More').on('click', getPublicMessages),
 ]});
 
-const bottomLine = m('div').addClass('text-center fw-light small text-secondary mb-3').append([
+const BottomLine = cc('div', {classes:'text-center fw-light small text-secondary mb-3', children:[
   m('a').text('https://github.com/ahui2016/iPelago-Server').addClass('link-secondary')
     .attr({href:'https://github.com/ahui2016/iPelago-Server', target:'_blank'}),
   m('i').addClass('bi bi-box-arrow-up-right ms-1'),
-]);
+]});
 
 $('#root').append([
   titleArea,
@@ -56,7 +56,7 @@ $('#root').append([
   m(Alerts).addClass('my-5'),
   m(Loading).addClass('my-5').hide(),
   m(MoreBtnArea),
-  bottomLine,
+  m(BottomLine).hide(),
 ]);
 
 init();
@@ -95,6 +95,8 @@ function getPublicMessages(): void {
       }
       if (messages.length < util.everyPage) {
         MoreBtnArea.elem().hide();
+      } else {
+        BottomLine.elem().show();
       }
       await appendToListAsync(MsgList, messages.map(MsgItem));
       lastTime = messages[messages.length-1].Time;
