@@ -107,7 +107,7 @@ function MsgItem(msg) {
         self.elem().find('.AvatarLink').attr({ href: islandPage });
         self.elem().find('.Avatar').attr({ src: avatar, alt: 'avatar' });
         const NameElem = self.elem().find('.Name');
-        NameElem.append(m('a').text(island.Name).attr({ href: islandPage }).addClass('text-decoration-none'));
+        NameElem.append(m('a').text(island.Name).attr({ href: islandPage }).addClass('text-decoration-none link-dark fw-bold'));
         if (island.Email) {
             NameElem.append(m('span').text(island.Email).addClass('small text-muted ms-1'));
         }

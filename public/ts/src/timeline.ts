@@ -130,7 +130,7 @@ function MsgItem(msg: util.Message): mjComponent {
 
     const NameElem = self.elem().find('.Name');
     NameElem.append(
-      m('a').text(island.Name).attr({href:islandPage}).addClass('text-decoration-none')
+      m('a').text(island.Name).attr({href:islandPage}).addClass('text-decoration-none link-dark fw-bold')
     );
     if (island.Email) {
       NameElem.append(
