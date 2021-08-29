@@ -33,7 +33,7 @@ const Form = cc('div', { classes: 'vstack gap-3', children: [
         create_item(EmailInput, 'Email', '岛主的真实 email, 可作为后备联系方式。(可留空，但建议填写)'),
         create_item(AvatarInput, 'Avatar', '头像图片的网址，头像图片应为正方形，建议头像体积控制在 100KB 以下。请确保头像图片能跨域访问。(可留空)'),
         create_item(LinkInput, 'Link', '一个网址，可以是你的个人网站或博客，也可填写其他社交帐号的网址。(可留空)'),
-        create_item(NoteInput, 'Note', '关于该岛的备注，该内容只在本地使用，不会对外发布。'),
+        create_item(NoteInput, 'Note', '关于该岛的备注，该内容只在本地使用，不会对外发布。(可留空)'),
         m('div').addClass('hstack gap-3').append([
             m('div').text('是否公开:'),
             m('div').addClass('form-check form-check-inline').append([

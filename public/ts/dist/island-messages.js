@@ -83,7 +83,7 @@ const MsgPostArea = cc('div', { children: [
             });
         })),
     ] });
-const MsgList = cc('div', { classes: 'vstack gap-4 mb-5' });
+const MsgList = cc('div', { classes: 'vstack gap-5 my-5' });
 const MoreBtn = cc('button', { classes: 'btn btn-outline-secondary' });
 const MoreBtnAlerts = util.CreateAlerts();
 const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
