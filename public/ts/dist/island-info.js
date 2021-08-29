@@ -153,7 +153,7 @@ async function init() {
 async function newIslandForm() {
     try {
         var avatarAddr = util.val(AvatarInput).trim();
-        await checkAvatarSize(avatarAddr);
+        // await checkAvatarSize(avatarAddr);    
     }
     catch (errMsg) {
         if (errMsg.indexOf('error occurred during the transaction') >= 0) {

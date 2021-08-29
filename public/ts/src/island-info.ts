@@ -172,7 +172,7 @@ async function init() {
 async function newIslandForm() {
   try {
     var avatarAddr = util.val(AvatarInput).trim();
-    await checkAvatarSize(avatarAddr);    
+    // await checkAvatarSize(avatarAddr);    
   } catch (errMsg) {
     if (errMsg.indexOf('error occurred during the transaction') >= 0) {
       errMsg = '无法访问头像图片(请确保可跨域访问): ' + errMsg;
