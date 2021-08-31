@@ -62,7 +62,7 @@ $('#root').append([
 init();
 
 async function init() {
-  await util.checkLogin();
+  await util.checkLogin(Alerts);
   initTitle();
   getPublicMessages();
 }

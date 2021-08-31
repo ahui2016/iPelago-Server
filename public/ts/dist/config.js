@@ -58,6 +58,7 @@ const ConfigPassword = cc('div', { children: [
                 }
                 util.ajax({ method: 'POST', url: '/admin/change-password', alerts: PasswordAlerts, buttonID: ChangePwdBtn.id, body: body }, () => {
                     PasswordAlerts.clear().insert('success', '更改密码成功');
+                    PasswordAlerts.insert('success', '请记住新密码，登入时如果密码错误三次即禁止继续尝试，需要重启服务端才能把密码错误次数重置为零。');
                 });
             }),
         ]),

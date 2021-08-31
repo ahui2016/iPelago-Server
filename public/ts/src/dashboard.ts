@@ -25,7 +25,7 @@ const Index = cc('div', {children: [
     create_item('Config', '/public/config.html', '全局设置'),
     m(LogoutBtnArea),
     m('div').addClass('small text-secondary text-center my-5').append([
-      span('version 2021-08-23'),
+      span('version 2021-08-31'),
       m('br'),
       m('a').text('https://github.com/ahui2016/iPelago-Server').addClass('small text-secondary')
         .attr({href:'https://github.com/ahui2016/iPelago-Server',target:'_blank'}),

@@ -13,12 +13,15 @@ import (
 const (
 	sessionName    = "ipelago-server-session"
 	cookieLogin    = "ipelago-server-cookie-login"
-	passwordMaxTry = 3 // 100
+	passwordMaxTry = 3
 )
 
 var ipTryCount = make(map[string]int)
 
 func checkIPTryCount(ip string) error {
+	if *demo {
+		return nil // 演示版允许无限重试密码
+	}
 	if ipTryCount[ip] >= passwordMaxTry {
 		return fmt.Errorf("no more try, input wrong password too many times")
 	}
