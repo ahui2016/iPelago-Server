@@ -45,7 +45,7 @@ $('#root').append([
 ]);
 init();
 async function init() {
-    await util.checkLogin(Alerts);
+    await util.checkLogin(); // 这里不能加 Alerts, 否则会提示需要管理员密码。
     initTitle();
     getPublicMessages();
 }
