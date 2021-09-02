@@ -12,7 +12,7 @@ import (
 )
 
 // 每一页有多少条消息。注意：如果修改该数值，同时需要修改 util.ts 中的 everyPage
-const EveryPage = 10 // 99
+const EveryPage = 30
 
 type (
 	Island     = model.Island
