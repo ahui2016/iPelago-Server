@@ -50,11 +50,13 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - 如果需要修改本软件的前端代码，请直接修改 public/ts/src 文件夹内的 ts 文件，修改后在 public/ts/src 文件夹内执行 tsc 命令即可自动重新生成必要的 js 文件。
 
+- 另外，本质上是前后端分离的，懂前端的朋友可以在完全不改动后端的情况下彻底改写前端。如果需要增加后端 api 又不想自己动手，可以发 issue, 工作量不大的话我可以增加一些 api。目前提供的全部 api 详见本页底部。
+
 ## iPelago beta 本地版
 
 - 本软件(github.com/ahui2016/iPelago-Server) 可单独使用，也可当作 [iPelago](https://ipelago.org) 的工具来使用，成功搭建网站后可非常方便地发布消息（不需要利用第三方平台），但没有订阅小岛的功能。
 
-- 另外还有一个 iPelago beta 本地版(github.com/ahui2016/ipelago), 可创建小岛（单账号）、批量订阅小岛，但对外发布消息时需要利用第三方平台。
+- 另外还有一个 iPelago beta 本地版(github.com/ahui2016/ipelago), 不需要服务器不需要搭建网站，可创建小岛（单账号）、批量订阅小岛，但对外发布消息时需要利用第三方平台。
 
 ## 为什么不提供RSS？
 
@@ -67,3 +69,90 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 ## 注意事项
 
 - 隐私小岛只是不能简单地通过网络访问，但没有加密，因此如果数据库泄漏就会泄露隐私小岛的内容。这与绝大多数网站的隐私处理是一样的，都只是隐藏而不是加密。
+
+## 前后端分离
+
+本程序是前后端分离的，可以在完全不改动后端的情况下彻底改写前端。目前，前端可以使用的 api 如下所示。
+
+- 其中以 /admin 开头的必须在登入后才能使用，以 /api 开头的则不登入也能使用
+- 访问 "/" 会跳转到 "/public/index.html"
+- 下面用 => 表示成功时服务器返回的数据
+
+### 查询是否已登入
+
+- GET: /api/login-status => boolean
+
+### 登入
+
+- POST: /api/login {"password": string}
+
+### 登出
+
+- GET: /api/logout
+
+### 获取公开消息
+
+- POST: /api/more-public-messages {"time", string} => Message[]
+
+- "time" 是一个时间戳（精确到秒）的字符串形式，比如 "1630510203"
+
+- Message[] 是指一个Message数组, Message 的结构是 (注意首字母大写):
+
+  ```
+  {
+    ID:       string;
+    IslandID: string;
+    Time:     number;
+    Body:     string;
+  }
+  ```
+
+### 获取首页标题
+
+- GET: /api/get-titles => {"title": string, "subtitle": string}
+
+### 获取小岛属性
+
+- 未登入时 POST: /api/get-island {"id": string} => Island
+- 已登入后 POST: /admin/get-island {"id": string} => Island
+- "id" 是指 Message.IslandID (请参考”获取公开消息“)
+- Island 的结构详见源码中的 public/ts/src/util.ts
+
+### 更改首页标题
+
+- POST: /admin/update-titles {"title": string, "subtitle": string}
+
+### 更改密码
+
+- POST: /admin/change-password {"old-pwd": string, "new-pwd": string}
+
+### 获取小岛列表
+
+- GET: /admin/all-islands => Island[]
+- Island[] 是指一个Island数组, Island 的结构详见源码中的 public/ts/src/util.ts
+
+### 创建/更新小岛
+
+- 创建 POST: /admin/create-island => {"message": string} （返回值是小岛ID）
+- 更新 POST: /admin/update-island
+- 发送时应包含的项目详见源码 public/ts/src/island-info.ts 中的函数 newIslandForm()
+
+### 发布消息
+
+- POST: /admin/post-message {"msg-body", "island-id", "hide"} => Message
+- "msg-body", "island-id", "hide" 都是字符串，其中 "hide" 只能是 "public" 或 "private"
+- Message 的结构请参考上文 ”获取公开消息“
+
+### 获取指定小岛的消息
+
+- POST: /admin/more-island-messages {"id": string, "time", string} => Message[]
+- 关于 "time" 与 Message[] 请参考上文 ”获取公开消息“
+
+### 删除消息
+
+- POST: /admin/delete-message {"message-id": string, "island-id": string}
+
+### 删除小岛
+
+- POST: /admin/delete-island {"id": string}
+

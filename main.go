@@ -16,7 +16,7 @@ func main() {
 
 	e.Static("/public", "public")
 
-	e.File("/", "public/timeline.html")
+	e.File("/", "public/index.html")
 
 	api := e.Group("/api")
 	api.GET("/login-status", getLoginStatus)
