@@ -4,6 +4,7 @@ import * as util from './util.js';
 const allIslands = new Map<string, util.Island>();
 let lastTime = dayjs().unix();
 let firstTime = true;
+let scope = util.getUrlParam('scope');
 
 interface Titles {
   Title: string;
@@ -13,7 +14,13 @@ interface Titles {
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 
+const allMsgUrl = '/public/index.html?scope=all';
 const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('ul').append([
+  m('li').append([
+    span('在已登入的状态下访问 '),
+    m('a').text(allMsgUrl).attr({href:allMsgUrl}),
+    span(' 可包含隐藏岛的消息。'),
+  ]),
   m('li').text('按 F12 打开控制台，输入命令 update_title("新的大标题") 可更改大标题。'),
   m('li').text('输入命令 update_subtitle("新的副标题") 可更改副标题。'),
   m('li').append([
@@ -54,7 +61,7 @@ $('#root').append([
   infoMsg.hide(),
   m(MsgList),
   m(Alerts).addClass('my-5'),
-  m(Loading).addClass('my-5').hide(),
+  m(Loading).addClass('my-5'),
   m(MoreBtnArea),
   m(BottomLine).hide(),
 ]);
@@ -62,7 +69,8 @@ $('#root').append([
 init();
 
 async function init() {
-  await util.checkLogin(); // 这里不能加 Alerts, 否则会提示需要管理员密码。
+  const isLoggedIn = await util.checkLogin(); // 这里不能加 Alerts, 否则会提示需要管理员密码。
+  if (!isLoggedIn) scope = ''; 
   initTitle();
   getPublicMessages();
 }
@@ -77,15 +85,19 @@ function initTitle(): void {
 }
 
 function getPublicMessages(): void {
-  Loading.show();
   if (firstTime) {
     var infoMsg = '没有公开消息';
     firstTime = false;
   } else {
     var infoMsg = '没有更多消息了';
   }
+  if (scope == 'all') {
+    var url = '/admin/more-all-messages';
+  } else {
+    var url = '/api/more-public-messages';
+  }
   const body = util.newFormData('time', lastTime.toString());
-  util.ajax({method:'POST',url:'/api/more-public-messages',alerts:Alerts,body:body},
+  util.ajax({method:'POST',url:url,alerts:Alerts,body:body},
     async (resp) => {
       const messages = resp as util.Message[];
       if (!messages || messages.length == 0) {
@@ -167,9 +179,14 @@ async function getIsland(id: string, alerts: util.mjAlerts) {
 }
 
 function getIslandByID(id: string): Promise<util.Island> {
+  if (scope == 'all') {
+    var url = '/admin/get-island';
+  } else {
+    var url = '/api/get-island';
+  }
   const body = util.newFormData('id', id);
   return new Promise((resolve, reject) => {
-    util.ajax({method:'POST',url:'/api/get-island',body:body},
+    util.ajax({method:'POST',url:url,body:body},
       (island) => {
         resolve(island);
       }, (errMsg) => {

@@ -56,6 +56,11 @@ const GetMorePublicMessages = `
   INNER JOIN island ON msg.island_id = island.id
   WHERE island.hide=0 and msg.time<? ORDER BY msg.time DESC LIMIT ?;`
 
+const GetMoreMessages = `
+  SELECT msg.id, island_id, msg.time, msg.body FROM message AS msg
+  INNER JOIN island ON msg.island_id = island.id
+  WHERE msg.time<? ORDER BY msg.time DESC LIMIT ?;`
+
 const DeleteIsland = `
   DELETE FROM island WHERE id=?;`
 

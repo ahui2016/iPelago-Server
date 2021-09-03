@@ -113,8 +113,11 @@ func (db *DB) MoreIslandMessages(id string, datetime int64) ([]*Message, error) 
 	return getMessages(db.DB, stmt.GetMoreMessagesByIsland, id, datetime, EveryPage)
 }
 
-// MorePublicMessages 获取全部公开小岛的更多消息。
-func (db *DB) MorePublicMessages(datetime int64) ([]*Message, error) {
+// MoreMessages 获取公开小岛或全部小岛的更多消息。
+func (db *DB) MoreMessages(datetime int64, all bool) ([]*Message, error) {
+	if all {
+		return getMessages(db.DB, stmt.GetMoreMessages, datetime, EveryPage)
+	}
 	return getMessages(db.DB, stmt.GetMorePublicMessages, datetime, EveryPage)
 }
 

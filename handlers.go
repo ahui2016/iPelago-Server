@@ -132,12 +132,24 @@ func moreIslandMessages(c echo.Context) error {
 	return c.JSON(OK, messages)
 }
 
-func morePublicMessages(c echo.Context) error {
+func moreMessages(c echo.Context, all bool) ([]*model.Message, error) {
 	datetime, err := getTimestamp(c)
+	if err != nil {
+		return nil, err
+	}
+	return db.MoreMessages(datetime, all)
+}
+
+func morePublicMessages(c echo.Context) error {
+	messages, err := moreMessages(c, false)
 	if err != nil {
 		return err
 	}
-	messages, err := db.MorePublicMessages(datetime)
+	return c.JSON(OK, messages)
+}
+
+func moreAllMessages(c echo.Context) error {
+	messages, err := moreMessages(c, true)
 	if err != nil {
 		return err
 	}

@@ -90,9 +90,11 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - GET: /api/logout
 
-### 获取公开消息
+### 获取消息
 
-- POST: /api/more-public-messages {"time", string} => Message[]
+- 获取公开消息 POST: /api/more-public-messages {"time", string} => Message[]
+
+- 获取公开及隐藏消息 POST: /admin/more-all-messages {"time", string} => Message[]
 
 - "time" 是一个时间戳（精确到秒）的字符串形式，比如 "1630510203"
 
@@ -115,7 +117,7 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - 未登入时 POST: /api/get-island {"id": string} => Island
 - 已登入后 POST: /admin/get-island {"id": string} => Island
-- "id" 是指 Message.IslandID (请参考”获取公开消息“)
+- "id" 是指 Message.IslandID (请参考”获取消息“)
 - Island 的结构详见源码中的 public/ts/src/util.ts
 
 ### 更改首页标题
@@ -141,12 +143,12 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - POST: /admin/post-message {"msg-body", "island-id", "hide"} => Message
 - "msg-body", "island-id", "hide" 都是字符串，其中 "hide" 只能是 "public" 或 "private"
-- Message 的结构请参考上文 ”获取公开消息“
+- Message 的结构请参考上文 ”获取消息“
 
 ### 获取指定小岛的消息
 
 - POST: /admin/more-island-messages {"id": string, "time", string} => Message[]
-- 关于 "time" 与 Message[] 请参考上文 ”获取公开消息“
+- 关于 "time" 与 Message[] 请参考上文 ”获取消息“
 
 ### 删除消息
 
