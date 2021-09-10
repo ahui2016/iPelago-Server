@@ -324,7 +324,11 @@ func checkAvatarSize(avatar string) (err error) {
 		if err != nil {
 			return
 		}
-		if len(blob) > model.AvatarSizeLimit {
+		imageSize := len(blob)
+		if imageSize < 500 { // 如果数据太小，很可能不是图片
+			return fmt.Errorf("it's not a valid image (data size: %d bytes)", imageSize)
+		}
+		if imageSize > model.AvatarSizeLimit {
 			return fmt.Errorf("the size exceeds the limit (150KB)")
 		}
 		return nil

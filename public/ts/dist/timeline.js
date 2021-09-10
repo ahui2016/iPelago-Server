@@ -102,8 +102,9 @@ function getPublicMessages() {
 function MsgItem(msg) {
     const MsgAlerts = util.CreateAlerts();
     const datetime = dayjs.unix(msg.Time).format('YYYY-MM-DD HH:mm:ss');
+    const islandPage = '/public/island-messages.html?id=' + msg.IslandID;
     const self = cc('div', { id: util.itemID(msg.ID), classes: 'd-flex justify-content-start align-items-start MsgItem', children: [
-            m('a').addClass('AvatarLink').append(m('img').addClass('Avatar')),
+            m('a').attr({ href: islandPage }).append(m('img').addClass('Avatar').attr({ src: '/public/avatar-default.jpg' })),
             m('div').addClass('ms-3 flex-fill').append([
                 m('div').addClass('Name'),
                 m('div').addClass('Contents fs-5').attr({ title: datetime }),
@@ -114,12 +115,9 @@ function MsgItem(msg) {
         const island = await getIsland(msg.IslandID, MsgAlerts);
         if (!island)
             return;
-        let avatar = '/public/avatar-default.jpg';
-        if (island.Avatar)
-            avatar = island.Avatar;
-        const islandPage = '/public/island-messages.html?id=' + msg.IslandID;
-        self.elem().find('.AvatarLink').attr({ href: islandPage });
-        self.elem().find('.Avatar').attr({ src: avatar, alt: 'avatar' });
+        if (island.Avatar) {
+            self.elem().find('.Avatar').attr({ src: island.Avatar });
+        }
         const NameElem = self.elem().find('.Name');
         NameElem.append(m('a').text(island.Name).attr({ href: islandPage }).addClass('text-decoration-none link-dark fw-bold'));
         if (island.Email) {

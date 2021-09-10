@@ -27,7 +27,7 @@ const TitleArea = cc('div', {
 const InfoAlerts = util.CreateAlerts();
 const InfoCard = cc('div', {classes:'card',children:[
   m('div').addClass('card-body d-flex justify-content-start align-items-start').append([
-    m('img').addClass('Avatar').attr({src:'/public/avatar-default.jpg',alt:'avatar'}),
+    m('img').addClass('Avatar').attr({src:'/public/avatar-default.jpg'}),
     m('div').addClass('ms-3 flex-fill IslandInfo').append([
       m('div').append([
         m('span').addClass('Name fw-bold'),

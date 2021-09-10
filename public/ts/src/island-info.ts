@@ -79,7 +79,7 @@ const SubmitBtnArea = cc('div', {children:[
           }
         });
     } catch (errMsg) {
-      Alerts.insert('danger', errMsg);
+      Alerts.insert('danger', errMsg as string);
     }
   }),
 
@@ -96,7 +96,7 @@ const SubmitBtnArea = cc('div', {children:[
           Alerts.insert('success', '更新成功')
         });
     } catch (errMsg) {
-      Alerts.insert('danger', errMsg);
+      Alerts.insert('danger', errMsg as string);
     }
   }),
 
@@ -174,7 +174,7 @@ async function newIslandForm() {
     var avatarAddr = util.val(AvatarInput).trim();
     // await checkAvatarSize(avatarAddr);    
   } catch (errMsg) {
-    if (errMsg.indexOf('error occurred during the transaction') >= 0) {
+    if ((errMsg as string).indexOf('error occurred during the transaction') >= 0) {
       errMsg = '无法访问头像图片(请确保可跨域访问): ' + errMsg;
     }
     throw errMsg;
