@@ -238,6 +238,10 @@ func changePassword(c echo.Context) error {
 	return db.ChangePassword(newPwd)
 }
 
+func downloadDB(c echo.Context) error {
+	return c.File(dbFileName)
+}
+
 // getFormValue gets the c.FormValue(key), trims its spaces,
 // and checks if it is empty or not.
 func getFormValue(c echo.Context, key string) (string, error) {
@@ -325,7 +329,7 @@ func checkAvatarSize(avatar string) (err error) {
 			return
 		}
 		imageSize := len(blob)
-		if imageSize < 500 { // 如果数据太小，很可能不是图片
+		if imageSize < 200 { // 如果数据太小，很可能不是图片
 			return fmt.Errorf("it's not a valid image (data size: %d bytes)", imageSize)
 		}
 		if imageSize > model.AvatarSizeLimit {
