@@ -1,6 +1,8 @@
 import { m, cc } from './mj.js';
 import * as util from './util.js';
 
+let lastPage = util.getUrlParam('lastpage');
+
 const title = m('div').text('iPelago Online').addClass('display-4 my-5 text-center');
 
 const Alerts = util.CreateAlerts();
@@ -42,7 +44,9 @@ const LoginForm = cc('form', {children: [
           $('.onLoggedIn').show();
           $('.onLoggedOut').hide();
           Alerts.clear().insert('success', '成功登入');
-          // setTimeout(() => { location.href = '/public/home.html' }, 2000);
+          if (lastPage) {
+            setTimeout(() => { location.href = '/public/'+lastPage }, 1000);            
+          }
         }, undefined, () => {
           PwdInput.elem().val('').trigger('focus');
         });

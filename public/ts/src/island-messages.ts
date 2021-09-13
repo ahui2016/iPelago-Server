@@ -3,6 +3,7 @@ import * as util from './util.js';
 
 const islandID = util.getUrlParam('id');
 const islandInfoPage = '/public/island-info.html?id='+islandID;
+const lastPage = 'island-messages.html?id='+islandID;
 let lastTime = dayjs().unix();
 let islandHide = 'public';
 let apiPrefix = '/admin';
@@ -19,10 +20,13 @@ const TitleArea = cc('div', {
     ),
     m('a').attr({href:islandInfoPage,title:'编辑小岛资料'}).addClass('onLoggedIn btn btn-outline-dark').append(
       m('i').addClass('bi bi-pencil')
-    ).hide(),
+    ),
     m('a').attr({href:'/public/dashboard.html',title:'dashboard'}).addClass('onLoggedIn btn btn-outline-dark').append(
       m('i').addClass('bi bi-gear')
-    ).hide(),
+    ),
+    m('a').attr({href:'/public/login.html?lastpage='+lastPage,title:'login'}).addClass('onLoggedOut btn btn-outline-dark').append(
+      m('i').addClass('bi bi-person')
+    ),
   ]
 });
 
