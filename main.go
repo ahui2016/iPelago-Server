@@ -22,8 +22,9 @@ func main() {
 	api.GET("/login-status", getLoginStatus)
 	api.POST("/login", loginHandler)
 	api.GET("/logout", logoutHandler)
-	api.POST("/get-island", getPublicIsland)
+	api.POST("/get-island", getIsland, checkPrivate)
 	api.POST("/more-public-messages", morePublicMessages)
+	api.POST("/more-island-messages", moreIslandMessages, checkPrivate)
 	api.GET("/get-titles", getTitles)
 
 	admin := e.Group("/admin", checkLogin)

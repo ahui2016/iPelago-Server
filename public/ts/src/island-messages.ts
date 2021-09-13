@@ -5,6 +5,8 @@ const islandID = util.getUrlParam('id');
 const islandInfoPage = '/public/island-info.html?id='+islandID;
 let lastTime = dayjs().unix();
 let islandHide = 'public';
+let apiPrefix = '/admin';
+let isLoggedIn = false;
 
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
@@ -119,30 +121,43 @@ $('#root').append([
   m(MoreBtnAlerts).addClass('my-5'),
   m(Loading).addClass('my-5'),
   m(MoreBtnArea).hide(),
-  m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
+  m(util.LoginArea).addClass('my-5').hide(),
 ]);
 
 init();
 
 async function init() {
-  const isLoggedIn = await util.checkLogin(Alerts);
+  isLoggedIn = await util.checkLogin(Alerts);
   Loading.hide();
-  if (!isLoggedIn) return;
-
-  if (islandID) {
-    Loading.show();
-    const body = util.newFormData('id', islandID);
-    util.ajax({method:'POST',url:'/admin/get-island',alerts:Alerts,body:body},
-      (resp) => {
-        const island = resp as util.Island;
-        InfoCard.elem().show();
-        InfoCard.init!(island);
-        MsgPostArea.elem().show();
-        MoreBtnArea.elem().show();
-        getMessages();
-        MsgInput.elem().trigger('focus');
-      });
+  if (!isLoggedIn) apiPrefix = '/api';
+  
+  if (!islandID) {
+    Alerts.insert('danger', '404 Not Found');
+    return;
   }
+
+  Alerts.clear();
+  Loading.show();
+  const body = util.newFormData('id', islandID);
+  util.ajax({method:'POST',url:apiPrefix+'/get-island',alerts:Alerts,body:body},
+    (resp) => {
+      const island = resp as util.Island;
+      if (!island.ID) {
+        Loading.hide();
+        Alerts.insert('danger', `找不到小岛(id: ${islandID})`);
+        return;
+      }
+      InfoCard.elem().show();
+      InfoCard.init!(island);
+      if (isLoggedIn) MsgPostArea.elem().show();
+      MoreBtnArea.elem().show();
+      getMessages();
+      MsgInput.elem().trigger('focus');
+    }, (errMsg) => {
+      Loading.hide();
+      Alerts.insert('danger', errMsg);
+      util.LoginArea.elem().show();
+    });
 }
 
 function getMessages(): void {
@@ -151,7 +166,7 @@ function getMessages(): void {
     id: islandID,
     time: lastTime.toString()
   }
-  util.ajax({method:'POST',url:'/admin/more-island-messages',alerts:Alerts,body:body},
+  util.ajax({method:'POST',url:apiPrefix+'/more-island-messages',alerts:Alerts,body:body},
     (resp) => {
       const messages = resp as util.Message[];
       if (!messages || messages.length == 0) {
@@ -176,7 +191,7 @@ function MsgItem(msg: util.Message): mjComponent {
     m('div').addClass('small text-muted').append([
       span(datetime),
       span('DELETED').addClass('Deleted badge bg-secondary ms-1').hide(),
-      m('i').addClass('CursorPointer DeleteBtn bi bi-trash ms-1').attr({title:'delete'}),
+      m('i').addClass('CursorPointer DeleteBtn bi bi-trash ms-1').attr({title:'delete'}).hide(),
     ]),
     m('span').addClass('Contents fs-5'),
     m(MsgAlerts),
@@ -184,7 +199,8 @@ function MsgItem(msg: util.Message): mjComponent {
 
   self.init = () => {    
     const selfElem = self.elem();
-    selfElem.find('.DeleteBtn').on('click', () => {  
+    const delBtn = selfElem.find('.DeleteBtn');
+    if (isLoggedIn) delBtn.show().on('click', () => {  
       const body = {
         'message-id': msg.ID,
         'island-id': msg.IslandID
@@ -193,7 +209,7 @@ function MsgItem(msg: util.Message): mjComponent {
         () => {
           selfElem.find('.Contents').removeClass('fs-5').addClass('text-muted');
           selfElem.find('.Deleted').toggle();
-          selfElem.find('.DeleteBtn').toggle();
+          delBtn.hide();
         });
     });
 

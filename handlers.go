@@ -27,6 +27,20 @@ func sleep(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+func checkPrivate(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.FormValue("id")
+		island, err := db.GetIslandByID(id)
+		if err != nil {
+			return err
+		}
+		if island.Hide {
+			return fmt.Errorf("the island is hidden")
+		}
+		return next(c)
+	}
+}
+
 func errorHandler(err error, c echo.Context) {
 	if e, ok := err.(*echo.HTTPError); ok {
 		c.JSON(e.Code, e.Message)
@@ -68,23 +82,8 @@ func loginHandler(c echo.Context) error {
 	return sess.Save(c.Request(), c.Response())
 }
 
-func getPublicIsland(c echo.Context) error {
-	id := c.FormValue("id")
-	island, err := db.GetIslandByID(id)
-	if err != nil {
-		return err
-	}
-	if island.Hide {
-		return fmt.Errorf("the island is hidden")
-	}
-	return c.JSON(OK, island)
-}
-
 func getIsland(c echo.Context) error {
-	id, err := getFormValue(c, "id")
-	if err != nil {
-		return err
-	}
+	id := c.FormValue("id")
 	island, err := db.GetIslandByID(id)
 	if err != nil {
 		return err
