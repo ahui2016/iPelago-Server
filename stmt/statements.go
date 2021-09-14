@@ -54,7 +54,7 @@ const GetMoreMessagesByIsland = `
 const GetMorePublicMessages = `
   SELECT msg.id, island_id, msg.time, msg.body FROM message AS msg
   INNER JOIN island ON msg.island_id = island.id
-  WHERE island.hide=0 and msg.time<? ORDER BY msg.time DESC LIMIT ?;`
+  WHERE island.hide=0 AND msg.time<? ORDER BY msg.time DESC LIMIT ?;`
 
 const GetMoreMessages = `
   SELECT msg.id, island_id, msg.time, msg.body FROM message AS msg
@@ -88,3 +88,7 @@ const CountMessages = `
 
 const CountIsland = `
   SELECT count(*) FROM island WHERE address=?;`
+
+const SearchMessages = `
+  SELECT * FROM message WHERE time<? AND body LIKE ?
+  ORDER BY time DESC LIMIT ?`

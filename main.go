@@ -33,6 +33,7 @@ func main() {
 	admin.POST("/update-island", updateIsland)
 	admin.POST("/delete-island", deleteIsland)
 	admin.GET("/all-islands", allIslands)
+	admin.POST("/search-messages", searchMessages)
 	admin.POST("/more-all-messages", moreAllMessages)
 	admin.POST("/more-island-messages", moreIslandMessages)
 	admin.POST("/post-message", postMessage)

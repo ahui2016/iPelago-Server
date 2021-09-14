@@ -121,6 +121,11 @@ func (db *DB) MoreMessages(datetime int64, all bool) ([]*Message, error) {
 	return getMessages(db.DB, stmt.GetMorePublicMessages, datetime, EveryPage)
 }
 
+func (db *DB) SearchMessages(pattern string, datetime int64) ([]*Message, error) {
+	return getMessages(
+		db.DB, stmt.SearchMessages, datetime, "%"+pattern+"%", EveryPage)
+}
+
 func (db *DB) PostMessage(body, islandID string, islandHide bool) (*Message, error) {
 	tx := db.mustBegin()
 	defer tx.Rollback()

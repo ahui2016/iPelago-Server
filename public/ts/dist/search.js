@@ -2,101 +2,92 @@ import { m, cc, span, appendToListAsync } from './mj.js';
 import * as util from './util.js';
 const allIslands = new Map();
 let lastTime = dayjs().unix();
-let firstTime = true;
-let scope = util.getUrlParam('scope');
+let isNewSearch = true;
+let pattern = '';
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
-const allMsgUrl = '/public/index.html?scope=all';
-const [infoBtn, infoMsg] = util.CreateInfoPair('使用说明', m('ul').append([
-    m('li').append([
-        span('在已登入的状态下访问 '),
-        m('a').text(allMsgUrl).attr({ href: allMsgUrl }),
-        span(' 可包含隐藏岛的消息。'),
-    ]),
-    m('li').text('按 F12 打开控制台，输入命令 update_title("新的大标题") 可更改大标题。'),
-    m('li').text('输入命令 update_subtitle("新的副标题") 可更改副标题。'),
-    m('li').append([
-        span('也可以进入 '),
-        m('a').text('Config页面').attr({ href: '/public/config.html' }),
-        span(' 修改标题。'),
-    ]),
-]));
-const Title = cc('span');
-const Subtitle = cc('div', { classes: 'fs-2 text-muted mt-3' });
 const titleArea = m('div').addClass('my-5 text-center').append([
     m('div').addClass('display-4').append([
-        m(Title).text('Timeline'),
-        infoBtn.addClass('onLoggedIn ms-1 btn-sm').hide(),
+        m('span').text('Search'),
         m('a').attr({ href: '/public/dashboard.html', title: 'dashboard' }).addClass('btn btn-sm btn-outline-dark ms-1').append(m('i').addClass('bi bi-gear')),
     ]),
-    m(Subtitle),
 ]);
-const MsgList = cc('div', { classes: 'my-5 vstack gap-5' });
+const MsgList = cc('div', { classes: 'vstack gap-5' });
+const SearchInput = cc('input', { classes: 'form-control' });
+const SearchBtn = cc('button', { classes: 'btn btn-outline-primary' });
+const SearchForm = cc('form', { classes: 'input-group my-5', children: [
+        m(SearchInput),
+        m(SearchBtn).text('Search').on('click', event => {
+            event.preventDefault();
+            isNewSearch = true;
+            lastTime = dayjs().unix();
+            MsgList.elem().html('');
+            pattern = util.val(SearchInput).trim();
+            if (pattern.length < 2) {
+                Alerts.insert('info', '搜索内容太短 (至少需要 2 个字符)');
+                SearchInput.elem().trigger('focus');
+                return;
+            }
+            search();
+        }),
+    ] });
 const MoreBtn = cc('button', { classes: 'btn btn-outline-secondary' });
 const MoreBtnArea = cc('div', { classes: 'text-center my-5', children: [
-        m(MoreBtn).text('More').on('click', getPublicMessages),
+        m(MoreBtn).text('More').on('click', search),
     ] });
-const BottomLine = cc('div', { classes: 'text-center fw-light small text-secondary mb-3', children: [
-        m('a').text('https://github.com/ahui2016/iPelago-Server').addClass('link-secondary')
-            .attr({ href: 'https://github.com/ahui2016/iPelago-Server', target: '_blank' }),
-        m('i').addClass('bi bi-box-arrow-up-right ms-1'),
+const BottomLine = cc('div', { classes: 'text-center fw-light small text-secondary my-5', children: [
+        m('a').text('Back to Timeline').addClass('link-secondary').attr({ href: '/public/index.html' }),
     ] });
 $('#root').append([
     titleArea,
-    infoMsg.hide(),
-    m(MsgList),
+    m(SearchForm).addClass('onLoggedIn'),
+    m(MsgList).addClass('my-5'),
     m(Alerts).addClass('my-5'),
     m(Loading).addClass('my-5'),
-    m(MoreBtnArea),
-    m(BottomLine).hide(),
+    m(MoreBtnArea).hide(),
+    m(BottomLine),
+    m(util.LoginArea).addClass('onLoggedOut my-5').hide(),
 ]);
 init();
 async function init() {
-    const isLoggedIn = await util.checkLogin(); // 这里不能加 Alerts, 否则会提示需要管理员密码。
-    if (!isLoggedIn)
-        scope = '';
-    initTitle();
-    getPublicMessages();
+    await util.checkLogin(Alerts);
+    Loading.hide();
+    setTimeout(() => { SearchInput.elem().trigger('focus'); }, 300);
 }
-function initTitle() {
-    util.ajax({ method: 'GET', url: '/api/get-titles', alerts: Alerts }, (resp) => {
-        const titles = resp;
-        Title.elem().text(titles.Title);
-        Subtitle.elem().text(titles.Subtitle);
-    });
-}
-function getPublicMessages() {
+function search() {
+    if (isNewSearch) {
+        MoreBtnArea.elem().show();
+        var notFoundMsg = `找不到 [${pattern}]`;
+        isNewSearch = false;
+    }
+    else {
+        var notFoundMsg = '没有更多相关消息了';
+    }
     Loading.show();
-    if (firstTime) {
-        var infoMsg = '没有公开消息';
-        firstTime = false;
-    }
-    else {
-        var infoMsg = '没有更多消息了';
-    }
-    if (scope == 'all') {
-        var url = '/admin/more-all-messages';
-    }
-    else {
-        var url = '/api/more-public-messages';
-    }
+    Alerts.insert('primary', `searching [${pattern}]...`);
     const body = util.newFormData('time', lastTime.toString());
-    util.ajax({ method: 'POST', url: url, alerts: Alerts, body: body }, async (resp) => {
+    body.set('pattern', pattern);
+    util.ajax({ method: 'POST', url: '/admin/search-messages', alerts: Alerts, body: body }, async (resp) => {
         const messages = resp;
         if (!messages || messages.length == 0) {
-            Alerts.insert('primary', infoMsg);
             MoreBtnArea.elem().hide();
+            Alerts.insert('info', notFoundMsg);
             return;
         }
+        Alerts.clear();
         if (messages.length < util.everyPage) {
             MoreBtnArea.elem().hide();
         }
-        else {
-            BottomLine.elem().show();
-        }
         await appendToListAsync(MsgList, messages.map(MsgItem));
         lastTime = messages[messages.length - 1].Time;
-    }, undefined, () => {
+    }, errMsg => {
+        if (errMsg.substr(0, 3) == '401') {
+            location.reload();
+        }
+        else {
+            Alerts.insert('danger', errMsg);
+        }
+    }, () => {
         Loading.hide();
     });
 }
@@ -154,36 +145,12 @@ async function getIsland(id, alerts) {
     }
 }
 function getIslandByID(id) {
-    if (scope == 'all') {
-        var url = '/admin/get-island';
-    }
-    else {
-        var url = '/api/get-island';
-    }
     const body = util.newFormData('id', id);
     return new Promise((resolve, reject) => {
-        util.ajax({ method: 'POST', url: url, body: body }, (island) => {
+        util.ajax({ method: 'POST', url: '/admin/get-island', body: body }, (island) => {
             resolve(island);
         }, (errMsg) => {
             reject(errMsg);
         });
     });
 }
-window.update_title = (title) => {
-    const body = util.newFormData('title', title.trim());
-    util.ajax({ method: 'POST', url: '/admin/update-title', alerts: Alerts, body: body }, () => {
-        Title.elem().text(title);
-        const infoMsg = '标题更新成功';
-        Alerts.insert('success', infoMsg);
-        console.log(infoMsg);
-    });
-};
-window.update_subtitle = (subtitle) => {
-    const body = util.newFormData('subtitle', subtitle.trim());
-    util.ajax({ method: 'POST', url: '/admin/update-subtitle', alerts: Alerts, body: body }, () => {
-        Subtitle.elem().text(subtitle);
-        const infoMsg = '副标题更新成功';
-        Alerts.insert('success', infoMsg);
-        console.log(infoMsg);
-    });
-};

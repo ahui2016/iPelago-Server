@@ -118,6 +118,19 @@ func allIslands(c echo.Context) error {
 	return c.JSON(OK, islands)
 }
 
+func searchMessages(c echo.Context) error {
+	pattern, e1 := getFormValue(c, "pattern")
+	datetime, e2 := getTimestamp(c)
+	if err := util.WrapErrors(e1, e2); err != nil {
+		return err
+	}
+	messages, err := db.SearchMessages(pattern, datetime)
+	if err != nil {
+		return err
+	}
+	return c.JSON(OK, messages)
+}
+
 func moreIslandMessages(c echo.Context) error {
 	id, e1 := getFormValue(c, "id")
 	datetime, e2 := getTimestamp(c)
