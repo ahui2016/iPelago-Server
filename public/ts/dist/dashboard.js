@@ -15,7 +15,7 @@ const LogoutBtnArea = cc('div', { classes: 'text-center my-5', children: [
 const Index = cc('div', { children: [
         m('div').append([
             create_item('Timeline', '/public/index.html', '时间线'),
-            create_item('Search', '/public/search.html', '搜索'),
+            create_item('Search', '/public/search.html', '站内搜索'),
             create_item('New Island', '/public/island-info.html', '新建小岛'),
             create_item('All Islands', '/public/islands.html', '全部小岛'),
             create_item('Config', '/public/config.html', '全局设置'),

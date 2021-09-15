@@ -116,6 +116,10 @@ const MoreBtnArea = cc('div', {classes:'text-center my-5',children:[
   m(MoreBtn).text('More').on('click', getMessages),
 ]});
 
+const BottomLine = cc('div', {classes:'text-center fw-light small text-secondary my-5', children:[
+  m('a').text('Back to Timeline').addClass('link-secondary').attr({href:'/public/index.html'}),
+]});
+
 $('#root').append([
   m(TitleArea),
   m(InfoCard).hide(),
@@ -125,6 +129,7 @@ $('#root').append([
   m(MoreBtnAlerts).addClass('my-5'),
   m(Loading).addClass('my-5'),
   m(MoreBtnArea).hide(),
+  m(BottomLine),
   m(util.LoginArea).addClass('my-5').hide(),
 ]);
 

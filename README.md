@@ -48,7 +48,7 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - mj.js 是一个受 Mithril.js 启发的基于 jQuery 实现的极简框架，对于曾经用过 jQuery 的人来说，学习成本接近零。详见 https://github.com/ahui2016/mj.js
 
-- 如果需要修改本软件的前端代码，请直接修改 public/ts/src 文件夹内的 ts 文件，修改后在 public/ts/src 文件夹内执行 tsc 命令即可自动重新生成必要的 js 文件。
+- 如果需要修改本软件的前端代码，请直接修改 public/ts/src 文件夹内的 ts 文件，修改后在 public/ts/ 文件夹内执行 tsc 命令即可自动重新生成必要的 js 文件。如果只是简单修改，也可以直接修改 public/ts/dist 里的 js 文件。
 
 - 另外，本质上是前后端分离的，懂前端的朋友可以在完全不改动后端的情况下彻底改写前端。如果需要增加后端 api 又不想自己动手，可以发 issue, 工作量不大的话我可以增加一些 api。目前提供的全部 api 详见本页底部。
 
@@ -143,12 +143,13 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - POST: /admin/post-message {"msg-body", "island-id", "hide"} => Message
 - "msg-body", "island-id", "hide" 都是字符串，其中 "hide" 只能是 "public" 或 "private"
-- Message 的结构请参考上文 ”获取消息“
+- Message 的结构请参考上文 "获取消息"
 
 ### 获取指定小岛的消息
 
-- POST: /admin/more-island-messages {"id": string, "time", string} => Message[]
-- 关于 "time" 与 Message[] 请参考上文 ”获取消息“
+- 未登入时 POST: /api/more-island-messages {"id": string, "time", string} => Message[]
+- 已登入后 POST: /admin/more-island-messages {"id": string, "time", string} => Message[]
+- 关于 "time" 与 Message[] 请参考上文 "获取消息"
 
 ### 删除消息
 
@@ -158,3 +159,11 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - POST: /admin/delete-island {"id": string}
 
+### 站内搜索
+
+- POST: /admin/search-messages => Message[]
+- 关于 Message[] 请参考上文 "获取消息"
+
+### 下载数据库文件
+
+- GET: /admin/download-db
