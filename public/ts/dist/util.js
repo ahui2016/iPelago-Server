@@ -1,8 +1,9 @@
-import { m, cc } from './mj.js';
+import { m, cc, span } from './mj.js';
 // 每一页有多少条消息。注意：如果修改该数值，同时需要修改 database.go 中的 EveryPage
 export const everyPage = 30;
 // 找出第一个链接
-export const httpRegex = /https?:\/\/[^\s,()!]+/;
+const httpRegex = /https?:\/\/[^\s,()!]+/;
+const tagLinkRegex = /#.+?#/;
 // 获取地址栏的参数。
 export function getUrlParam(param) {
     var _a;
@@ -181,4 +182,37 @@ export function val(obj) {
 }
 export function itemID(id) {
     return `i${id}`;
+}
+export function contentsWithLinks(contents) {
+    const httpLink = contents.match(httpRegex);
+    if (!httpLink)
+        return contents;
+    const head = contents.substring(0, httpLink.index);
+    const tail = contents.substring(httpLink.index + httpLink[0].length);
+    const headArr = addLinkToTag(head);
+    if (headArr.length == 1) {
+        var tailArr = addLinkToTag(tail);
+    }
+    else {
+        var tailArr = [span(tail)];
+    }
+    return [
+        ...headArr,
+        m('a').addClass('link-dark').text(httpLink[0]).attr({ href: encodeURI(httpLink[0]), target: '_blank' }),
+        m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
+        ...tailArr,
+    ];
+}
+function addLinkToTag(s) {
+    const tagLink = s.match(tagLinkRegex);
+    if (!tagLink)
+        return [span(s)];
+    const head = s.substring(0, tagLink.index);
+    const tail = s.substring(tagLink.index + tagLink[0].length);
+    const url = '/public/search.html?pattern=' + encodeURIComponent(tagLink[0]);
+    return [
+        span(head),
+        m('a').addClass('link-dark').text(tagLink[0]).attr({ href: url }),
+        span(tail),
+    ];
 }

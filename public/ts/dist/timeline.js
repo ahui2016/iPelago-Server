@@ -125,17 +125,12 @@ function MsgItem(msg) {
             NameElem.append(m('span').text(island.Email).addClass('small text-muted ms-1'));
         }
         const contentsElem = $(self.id).find('.Contents');
-        const httpLink = msg.Body.match(util.httpRegex);
-        if (!httpLink) {
-            contentsElem.text(msg.Body);
+        const contents = util.contentsWithLinks(msg.Body);
+        if (typeof contents == 'string') {
+            contentsElem.text(contents);
         }
-        else if (httpLink.index) {
-            contentsElem.append([
-                span(msg.Body.substring(0, httpLink.index)),
-                m('a').addClass('link-dark').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
-                m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
-                span(msg.Body.substring(httpLink.index + httpLink[0].length)),
-            ]);
+        else {
+            contentsElem.append(contents);
         }
     };
     return self;

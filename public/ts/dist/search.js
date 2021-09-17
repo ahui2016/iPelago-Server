@@ -1,9 +1,9 @@
-import { m, cc, span, appendToListAsync } from './mj.js';
+import { m, cc, appendToListAsync } from './mj.js';
 import * as util from './util.js';
 const allIslands = new Map();
 let lastTime = dayjs().unix();
 let isNewSearch = true;
-let pattern = '';
+let pattern = util.getUrlParam('pattern');
 const Alerts = util.CreateAlerts();
 const Loading = util.CreateLoading();
 const titleArea = m('div').addClass('my-5 text-center').append([
@@ -50,9 +50,21 @@ $('#root').append([
 ]);
 init();
 async function init() {
-    await util.checkLogin(Alerts);
+    const isLoggedIn = await util.checkLogin();
+    if (!isLoggedIn) {
+        Alerts.insert('info', '需要用管理员密码登入后才能使用搜索功能');
+        Loading.hide();
+        return;
+    }
     Loading.hide();
-    setTimeout(() => { SearchInput.elem().trigger('focus'); }, 300);
+    setTimeout(() => {
+        // SearchInput.elem().trigger('focus');
+        console.log('pattern:', pattern);
+        if (pattern) {
+            SearchInput.elem().val(pattern);
+            SearchBtn.elem().trigger('click');
+        }
+    }, 300);
 }
 function search() {
     if (isNewSearch) {
@@ -116,17 +128,12 @@ function MsgItem(msg) {
             NameElem.append(m('span').text(island.Email).addClass('small text-muted ms-1'));
         }
         const contentsElem = $(self.id).find('.Contents');
-        const httpLink = msg.Body.match(util.httpRegex);
-        if (!httpLink) {
-            contentsElem.text(msg.Body);
+        const contents = util.contentsWithLinks(msg.Body);
+        if (typeof contents == 'string') {
+            contentsElem.text(contents);
         }
-        else if (httpLink.index) {
-            contentsElem.append([
-                span(msg.Body.substring(0, httpLink.index)),
-                m('a').addClass('link-dark').text(httpLink[0]).attr({ href: httpLink[0], target: '_blank' }),
-                m('i').addClass('bi bi-box-arrow-up-right ms-1 text-secondary small'),
-                span(msg.Body.substring(httpLink.index + httpLink[0].length)),
-            ]);
+        else {
+            contentsElem.append(contents);
         }
     };
     return self;
