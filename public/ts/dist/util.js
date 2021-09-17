@@ -185,8 +185,12 @@ export function itemID(id) {
 }
 export function contentsWithLinks(contents) {
     const httpLink = contents.match(httpRegex);
-    if (!httpLink)
-        return contents;
+    if (!httpLink) {
+        const tagLink = contents.match(tagLinkRegex);
+        if (!tagLink)
+            return contents;
+        return addLinkToTag(contents);
+    }
     const head = contents.substring(0, httpLink.index);
     const tail = contents.substring(httpLink.index + httpLink[0].length);
     const headArr = addLinkToTag(head);
