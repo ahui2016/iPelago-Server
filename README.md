@@ -75,7 +75,7 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 - 攒写消息时，如果包含以 http 开头并且以空格结尾的链接，会被处理为可点击的链接。但同一条消息内只有第一个链接会被处理为可点击。
 - 攒写消息时，可以用两个井号表示标签 (比如 #技术笔记# ), 这种标签会被处理为可点击，点击可搜索具有相同标签的消息。但同一条消息内只有第一个标签会被处理为可点击。
-- 以上特殊处理都是前端处理，在后端只保存纯文本消息。因此，所谓标签不是真的标签，只是普通的搜索而已，但用起来很方便（比如，在时间线页面点击 #技术笔记#, 其效果完全等同于在搜索页面手动输入 #技术笔记# 进行搜索）。
+- 以上特殊处理都是前端处理，在后端只保存纯文本消息。因此，所谓标签不是真的标签，只是普通的搜索而已，但用起来很方便。（比如，在时间线页面点击 #技术笔记#, 其效果完全等同于在搜索页面手动输入 #技术笔记# 进行搜索）
 
 ## 前后端分离
 
@@ -91,7 +91,7 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 ### 登入
 
-- POST: /api/login {"password": string}
+- POST: /api/login {"password"}
 
 ### 登出
 
@@ -99,9 +99,9 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 ### 获取消息
 
-- 获取公开消息 POST: /api/more-public-messages {"time", string} => Message[]
+- 获取公开消息 POST: /api/more-public-messages {"time"} => Message[]
 
-- 获取公开及隐藏消息 POST: /admin/more-all-messages {"time", string} => Message[]
+- 获取公开及隐藏消息 POST: /admin/more-all-messages {"time"} => Message[]
 
 - "time" 是一个时间戳（精确到秒）的字符串形式，比如 "1630510203"
 
@@ -118,22 +118,22 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 ### 获取首页标题
 
-- GET: /api/get-titles => {"title": string, "subtitle": string}
+- GET: /api/get-titles => {"title", "subtitle"}
 
 ### 获取小岛属性
 
-- 未登入时 POST: /api/get-island {"id": string} => Island
-- 已登入后 POST: /admin/get-island {"id": string} => Island
+- 未登入时 POST: /api/get-island {"id"} => Island
+- 已登入后 POST: /admin/get-island {"id"} => Island
 - "id" 是指 Message.IslandID (请参考”获取消息“)
 - Island 的结构详见源码中的 public/ts/src/util.ts
 
 ### 更改首页标题
 
-- POST: /admin/update-titles {"title": string, "subtitle": string}
+- POST: /admin/update-titles {"title", "subtitle"}
 
 ### 更改密码
 
-- POST: /admin/change-password {"old-pwd": string, "new-pwd": string}
+- POST: /admin/change-password {"old-pwd", "new-pwd"}
 
 ### 获取小岛列表
 
@@ -142,7 +142,7 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 ### 创建/更新小岛
 
-- 创建 POST: /admin/create-island => {"message": string} （返回值是小岛ID）
+- 创建 POST: /admin/create-island => {"message"} （返回值是小岛ID）
 - 更新 POST: /admin/update-island
 - 发送时应包含的项目详见源码 public/ts/src/island-info.ts 中的函数 newIslandForm()
 
@@ -154,17 +154,17 @@ $ ./iPelago-Server -addr 0.0.0.0:955
 
 ### 获取指定小岛的消息
 
-- 未登入时 POST: /api/more-island-messages {"id": string, "time", string} => Message[]
-- 已登入后 POST: /admin/more-island-messages {"id": string, "time", string} => Message[]
+- 未登入时 POST: /api/more-island-messages {"id", "time"} => Message[]
+- 已登入后 POST: /admin/more-island-messages {"id", "time"} => Message[]
 - 关于 "time" 与 Message[] 请参考上文 "获取消息"
 
 ### 删除消息
 
-- POST: /admin/delete-message {"message-id": string, "island-id": string}
+- POST: /admin/delete-message {"message-id", "island-id"}
 
 ### 删除小岛
 
-- POST: /admin/delete-island {"id": string}
+- POST: /admin/delete-island {"id"}
 
 ### 站内搜索
 

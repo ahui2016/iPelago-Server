@@ -26,7 +26,7 @@ var secretKey []byte
 
 var (
 	db   = new(database.DB)
-	addr = flag.String("addr", "127.0.0.1:80", "IP address of the server")
+	addr = flag.String("addr", "127.0.0.1:80", "local IP address")
 	demo = flag.Bool("demo", false, "set this flag for demo")
 )
 

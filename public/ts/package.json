@@ -1,7 +1,6 @@
 {
   "name": "ipelago-server-ts",
   "version": "1.0.0",
-  "main": "output/index.js",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {

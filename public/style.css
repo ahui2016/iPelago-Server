@@ -1,6 +1,8 @@
 body {
-    font-family: "Palatino Linotype", Palatino, Palladio, Baskerville, sans-serif;
     zoom: 90%;
+    color: #454545;
+    background-color: #FeFeFe;
+    font-family: "Palatino Linotype", Palatino, Palladio, Baskerville, sans-serif;
 }
 
 pre {

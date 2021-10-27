@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS message
 
 CREATE INDEX IF NOT EXISTS idx_message_time ON message(time);
 CREATE INDEX IF NOT EXISTS idx_message_id_time ON message(id, time);
+CREATE INDEX IF NOT EXISTS idx_message_body ON message(body);
 
 CREATE TABLE IF NOT EXISTS metadata
 (

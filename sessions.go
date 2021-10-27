@@ -13,7 +13,7 @@ import (
 const (
 	sessionName    = "ipelago-server-session"
 	cookieLogin    = "ipelago-server-cookie-login"
-	passwordMaxTry = 3
+	passwordMaxTry = 5
 )
 
 var ipTryCount = make(map[string]int)
