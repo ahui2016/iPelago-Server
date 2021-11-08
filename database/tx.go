@@ -215,6 +215,7 @@ func publishNewsletter(tx TX, id string) error {
 	return os.WriteFile(islandAddress(id), newsletter, 0644)
 }
 
+// islandAddress 返回本地小岛地址（即 json 文件的位置）
 func islandAddress(id string) string {
 	return fmt.Sprintf("public/%s.json", id)
 }

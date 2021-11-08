@@ -64,6 +64,13 @@ func PathIsExist(name string) bool {
 	return !PathIsNotExist(name)
 }
 
+func RemoveIfExist(name string) (err error) {
+	if PathIsExist(name) {
+		err = os.Remove(name)
+	}
+	return err
+}
+
 func TimeNow() int64 {
 	return time.Now().Unix()
 }

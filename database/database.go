@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
 	"github.com/ahui2016/iPelago-Server/model"
 	"github.com/ahui2016/iPelago-Server/stmt"
@@ -56,7 +55,7 @@ func (db *DB) UpdateIsland(island *Island) error {
 		return err
 	}
 	if island.Hide {
-		if err := os.Remove(islandAddress(island.ID)); err != nil {
+		if err := util.RemoveIfExist(islandAddress(island.ID)); err != nil {
 			return err
 		}
 	} else {
