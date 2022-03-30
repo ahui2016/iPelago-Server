@@ -27,7 +27,7 @@ const PwdInput = cc('input');
 const SubmitBtn = cc('button');
 
 const LoginForm = cc('form', {children: [
-  m('label').text('请输入管理员密码:').attr({for:PwdInput.id}).addClass('form-label'),
+  m('label').text('请输入管理员密码:').attr({for:PwdInput.raw_id}).addClass('form-label'),
   m('div').addClass('input-group').append([
     m(PwdInput).attr({type:'password'}).addClass('form-control'),
     m(SubmitBtn).text('login').addClass('btn btn-primary').on('click', event => {

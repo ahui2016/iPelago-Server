@@ -62,9 +62,9 @@ func loginHandler(c echo.Context) error {
 	if isLoggedIn(c) {
 		return c.NoContent(OK)
 	}
-	pwd, err := getFormValue(c, "password")
-	if err != nil {
-		return err
+	pwd := c.FormValue("password")
+	if pwd == "" {
+		return fmt.Errorf("form value [password] is empty")
 	}
 
 	ip := c.RealIP()
